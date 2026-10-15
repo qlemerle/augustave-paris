@@ -1,0 +1,132 @@
+# Augustave Paris : site vitrine et boutique
+
+Site Next.js (App Router, TypeScript) pour la marque de bijoux faits main Augustave Paris.
+Il fonctionne tout de suite avec un catalogue de démonstration, et se branche sur Shopify
+en changeant deux variables d'environnement.
+
+## Démarrer
+
+```bash
+npm install
+cp .env.example .env.local
+npm run dev        # http://localhost:3000
+npm run build      # vérification de production
+```
+
+## Pages
+
+| URL | Contenu |
+| --- | --- |
+| `/` | Accueil : héros en fondu, collections, catégories, nouveautés, sur-mesure, coups de cœur, Instagram, newsletter |
+| `/boutique`, `/boutique/<catégorie>` | Tous les bijoux, filtres par catégorie, tri |
+| `/collections`, `/collections/<collection>` | Univers Rouge Love, La Nacrée, Bronze, Grey Shades, Texas Stones, Le cœur de l'Océan, Édition Fall |
+| `/produit/<handle>` | Fiche produit : galerie, tailles, quantité, ajout au panier, matières, entretien |
+| `/sur-mesure` | Édition Votre Histoire, avec formulaire de demande |
+| `/maison` | Histoire de la marque |
+| `/infos/<page>` | Livraison & retours, entretien, CGV, mentions légales, confidentialité |
+
+Catégories : Colliers, Sautoirs, Ras-de-cou, Bracelets, Boucles d'oreilles.
+
+## Ajouter les photos
+
+Aucune modification de code n'est nécessaire : il suffit de déposer les fichiers (jpg, png, webp ou avif)
+dans `public/images/`. Tant qu'une photo manque, une illustration du bijou s'affiche à sa place.
+
+| Où | Nom du fichier |
+| --- | --- |
+| Produits | `public/images/produits/<handle>-1.jpg`, `<handle>-2.jpg`… (la 2e s'affiche au survol) |
+| Catégories | `public/images/categories/<handle>.jpg` (ex. `colliers.jpg`) |
+| Collections | `public/images/collections/<handle>.jpg` (ex. `rouge-love.jpg`) |
+| Héros de l'accueil | `public/images/accueil/hero-1.jpg`, `hero-2.jpg`, `hero-3.jpg` |
+| Bloc sur-mesure de l'accueil | `public/images/accueil/sur-mesure.jpg`, `sur-mesure-2.jpg` |
+| Page sur-mesure | `public/images/sur-mesure/atelier.jpg` |
+| Page La Maison | `public/images/maison/fondatrice.jpg`, `maison/atelier.jpg` |
+
+Les handles des produits sont dans `lib/commerce/mock/catalog.json` (ex. `collier-rouge-love`).
+Format conseillé : portrait 4:5, 1600 px de large minimum. Avec Shopify, les photos produits
+viennent directement de Shopify.
+
+### Photos actuelles
+
+- **Photos portées** (accueil, collections, Maison, colliers Rouge Love, La Nacrée, Bronze, Grey Shades,
+  Cœur de l'Océan, Texas Stones) : recadrées depuis les captures Instagram, textes et logos incrustés effacés.
+  Elles restent en basse définition : les remplacer par les originaux (même nom de fichier).
+- **Visuels « à plat »** (bijoux sur lin, lumière de fin de journée) : générés par programme pour les
+  bijoux sans photo, la 2e vue de chaque bijou, les catégories, l'Édition Fall et la table de l'atelier.
+  Ce sont des illustrations fidèles aux couleurs et aux formes, pas des photos : à remplacer par de vraies
+  photos dès qu'elles existent. Générateur : `tools/visuels/` (`cd tools/visuels && node render.cjs out`, nécessite Playwright).
+
+## Histoire et effets immersifs
+
+- Textes de l'histoire de la marque et de la créatrice : `story` dans `lib/site.ts`
+  (manifeste, 5 chapitres d'inspiration, portrait, le geste, signatures). Prénom et parcours à compléter.
+- Portrait de la créatrice : `public/images/maison/fondatrice.jpg`.
+- Effets (écran d'introduction, rideau entre les pages, fil d'or qui s'enfile de perles au défilement,
+  texte qui s'illumine, chapitres en défilement horizontal, parallaxe) : `lib/fx.mjs`,
+  branchés par `components/Fx.tsx`. Tous sont désactivés si le visiteur a demandé moins d'animations.
+
+## Direction artistique
+
+- **Le fil** : un fil d'or court le long de la marge gauche ; à chaque section, une perle aux couleurs
+  d'une collection s'y enfile. C'est l'élément signature ; le reste reste sobre.
+- **Couleurs** : encre marine `#0e2340` et or `#c6a15b` (logo), fond nacre `#f4f2ef` (gris perle des coquillages),
+  rouge Rouge Love `#b3262e` réservé aux petits détails.
+- **Typographies** : Bodoni Moda (didone de maison de couture) pour les titres, Jost (héritière de Futura) pour le texte.
+- **Règles** : titres sans mot isolé en italique, pas de petites capitales espacées (sauf le logotype),
+  pas de flèches décoratives dans les boutons.
+
+## Brancher Shopify
+
+1. Dans Shopify : Paramètres > Applications > Développer des applications > créer une application,
+   activer la **Storefront API** (lecture des produits, collections, et écriture du panier).
+2. Renseigner `.env.local` :
+   ```
+   COMMERCE_PROVIDER=shopify
+   SHOPIFY_STORE_DOMAIN=augustave-paris.myshopify.com
+   SHOPIFY_STOREFRONT_ACCESS_TOKEN=...
+   ```
+3. Organiser le catalogue Shopify ainsi :
+   - **Catégorie** = champ « Type de produit » (Colliers, Sautoirs, Ras-de-cou, Bracelets, Boucles d'oreilles).
+   - **Collection** = collections Shopify avec les handles `rouge-love`, `la-nacree`, `bronze`… 
+   - **Tailles** = variantes (option « Longueur » ou « Tour de poignet »).
+   - **Badges** = tags `nouveau`, `best-seller`, `piece-unique`, `edition-limitee`.
+   - Métachamps facultatifs : produit `custom.materiaux`, `custom.accroche` ; collection `custom.surtitre`, `custom.couleur`.
+4. Le bouton « Passer commande » crée un panier Shopify et redirige vers le paiement Shopify
+   (CB, Apple Pay, PayPal… selon ce qui est activé dans Shopify).
+
+Sans Shopify, le panier fonctionne et « Passer commande » mène à une page de démonstration.
+
+## Organisation du code
+
+```
+app/                    pages (App Router) + globals.css (toute la charte graphique)
+components/             en-tête, pied de page, cartes produit, panier, formulaires
+lib/commerce/types.ts   modèle de données neutre utilisé par toutes les pages
+lib/commerce/mock/      catalogue de démonstration (catalog.json)
+lib/commerce/shopify/   client et requêtes Storefront API
+lib/site.ts             textes éditables : bandeau, engagements, pages d'infos, e-mail
+lib/jewel-art.mjs       illustrations de remplacement des bijoux
+public/brand/           logo (rond, doré détouré, monogramme)
+preview/                aperçu statique en une page (node --no-warnings preview/build.mjs)
+```
+
+## À compléter avant la mise en ligne
+
+- Prix, descriptions et matières des bijoux (les valeurs actuelles sont des exemples).
+- Adresse e-mail de contact (`lib/site.ts`), seuil de livraison offerte, tarifs de livraison.
+- CGV, mentions légales, politique de confidentialité (`lib/site.ts`, `infoPages`).
+- Newsletter : relier `NewsletterForm` (components/Forms.tsx) à Shopify, Klaviyo ou Brevo.
+- Formulaire sur-mesure : il ouvre aujourd'hui la messagerie avec la demande préremplie ;
+  il peut être relié à un service de formulaires (Formspree, Shopify Forms).
+
+## Hébergement
+
+Recommandé : Vercel (gratuit pour démarrer), avec les variables d'environnement ci-dessus et
+`NEXT_PUBLIC_SITE_URL` réglé sur le nom de domaine final.
+
+## Aperçu en ligne (GitHub Pages)
+
+À chaque mise à jour de la branche `main`, `.github/workflows/pages.yml` construit l'aperçu
+(`node --no-warnings preview/build.mjs --site _site`) et le publie sur GitHub Pages,
+à l'adresse `https://<compte>.github.io/<dépôt>/`. La page n'est pas indexée par les moteurs de recherche.
+Le site Next.js complet (panier, Shopify) s'héberge, lui, sur Vercel.

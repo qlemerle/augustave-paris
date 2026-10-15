@@ -1,0 +1,689 @@
+{
+  "categories": [
+    {
+      "handle": "colliers",
+      "title": "Colliers",
+      "tagline": "À porter près du cœur",
+      "description": "Des pièces délicates, montées perle après perle, pensées pour accompagner chaque jour.",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#c6a15b"
+        ],
+        "pendant": "coin",
+        "bg": [
+          "#efe6d8",
+          "#e2d3bd"
+        ]
+      }
+    },
+    {
+      "handle": "sautoirs",
+      "title": "Sautoirs",
+      "tagline": "Longueurs bohèmes",
+      "description": "Des longueurs généreuses qui dessinent la silhouette, à superposer sans retenue.",
+      "art": {
+        "type": "long",
+        "beads": [
+          "#9a5b2e",
+          "#c6a15b"
+        ],
+        "pendant": "drop",
+        "bg": [
+          "#ece0cf",
+          "#d9c3a5"
+        ]
+      }
+    },
+    {
+      "handle": "ras-de-cou",
+      "title": "Ras-de-cou",
+      "tagline": "Lumière sur la nuque",
+      "description": "Des colliers courts, graphiques, qui soulignent le décolleté avec élégance.",
+      "art": {
+        "type": "choker",
+        "beads": [
+          "#e9dccb",
+          "#d9774f"
+        ],
+        "pendant": "nacre",
+        "bg": [
+          "#f1e9de",
+          "#e6d6c3"
+        ]
+      }
+    },
+    {
+      "handle": "bracelets",
+      "title": "Bracelets",
+      "tagline": "Gestes précieux",
+      "description": "Des bracelets fins à accumuler, assortis à vos colliers préférés.",
+      "art": {
+        "type": "bracelet",
+        "beads": [
+          "#b3262e",
+          "#c6a15b"
+        ],
+        "pendant": "heart",
+        "bg": [
+          "#f2e7e1",
+          "#e5cfc6"
+        ]
+      }
+    },
+    {
+      "handle": "boucles-d-oreilles",
+      "title": "Boucles d'oreilles",
+      "tagline": "Éclats légers",
+      "description": "Des pendants aériens qui captent la lumière à chaque mouvement.",
+      "art": {
+        "type": "earrings",
+        "beads": [
+          "#8a8d91",
+          "#c6a15b"
+        ],
+        "pendant": "drop",
+        "bg": [
+          "#ebe8e4",
+          "#d8d4cf"
+        ]
+      }
+    }
+  ],
+  "collections": [
+    {
+      "handle": "rouge-love",
+      "title": "Rouge Love",
+      "kicker": "Collection",
+      "description": "Un cordon rouge comme un serment. Une clé, une serrure en forme de cœur et une perle : Rouge Love parle de mystère et d'attachement.",
+      "accent": "#b3262e",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#b3262e"
+        ],
+        "pendant": "heart",
+        "bg": [
+          "#f3e8e2",
+          "#e8cfc6"
+        ]
+      }
+    },
+    {
+      "handle": "la-nacree",
+      "title": "La Nacrée",
+      "kicker": "Collection",
+      "description": "La nacre naturelle d'un coquillage, une perle logée en son creux et un dégradé de perles scintillantes. Une collection lumineuse, faite de pièces uniques.",
+      "accent": "#d9774f",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#d9774f",
+          "#e9dccb"
+        ],
+        "pendant": "nacre",
+        "bg": [
+          "#f4ebe2",
+          "#ead8c7"
+        ]
+      }
+    },
+    {
+      "handle": "bronze",
+      "title": "Bronze",
+      "kicker": "Collection",
+      "description": "Un collier en bronze ? Non, not really. Des perles de verre massives au fini bronze, sur un fil invisible. À porter sur du blanc, du beige, du rose ou un total look lin.",
+      "accent": "#9a5b2e",
+      "art": {
+        "type": "cluster",
+        "beads": [
+          "#8c4f27",
+          "#a8673a",
+          "#c6a15b"
+        ],
+        "pendant": null,
+        "bg": [
+          "#efe5d8",
+          "#dcc7ad"
+        ]
+      }
+    },
+    {
+      "handle": "grey-shades",
+      "title": "Grey Shades",
+      "kicker": "Collection",
+      "description": "Gris, ton sur ton. Des coquillages cueillis sur les plages de Bretagne, des perles grises et des rocailles métallisées : la beauté brute de la mer.",
+      "accent": "#7d8187",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#8a8d91",
+          "#b9bbbe"
+        ],
+        "pendant": "stone",
+        "bg": [
+          "#eeece8",
+          "#dad7d2"
+        ]
+      }
+    },
+    {
+      "handle": "texas-stones",
+      "title": "Texas Stones",
+      "kicker": "Collection",
+      "description": "Pierres vertes, breloques dorées et soleil couchant sur les grands espaces de l'Ouest. Des pièces fortes, à porter de plusieurs façons.",
+      "accent": "#6f9c7f",
+      "art": {
+        "type": "multi",
+        "beads": [
+          "#6f9c7f",
+          "#9dbf9c",
+          "#c6a15b"
+        ],
+        "pendant": null,
+        "bg": [
+          "#f1e5d3",
+          "#dfc6a2"
+        ]
+      }
+    },
+    {
+      "handle": "coeur-de-l-ocean",
+      "title": "Le cœur de l'Océan",
+      "kicker": "Collection",
+      "description": "Porter un morceau d'océan. Un coquillage doré, une perle grise en son cœur, et le rythme des marées bretonnes.",
+      "accent": "#2b5c7e",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#2b5c7e",
+          "#8fb3c9"
+        ],
+        "pendant": "shell",
+        "bg": [
+          "#e9eef0",
+          "#d3dde2"
+        ]
+      }
+    },
+    {
+      "handle": "edition-fall",
+      "title": "Édition Fall",
+      "kicker": "Édition limitée",
+      "description": "Pour briller en automne. Ambre, terracotta et feuilles d'or : une édition courte, façonnée en petites séries.",
+      "accent": "#b8692f",
+      "art": {
+        "type": "long",
+        "beads": [
+          "#b8692f",
+          "#d9a05b",
+          "#7a3f1d"
+        ],
+        "pendant": "leaf",
+        "bg": [
+          "#f0e3d2",
+          "#e0c4a0"
+        ]
+      }
+    }
+  ],
+  "products": [
+    {
+      "handle": "collier-rouge-love",
+      "title": "Collier Rouge Love",
+      "collection": "rouge-love",
+      "category": "colliers",
+      "price": 59,
+      "tags": [
+        "best-seller"
+      ],
+      "excerpt": "Une clé, une serrure-cœur et une perle sur un cordon rouge.",
+      "description": "Une création délicate qui allie l'intensité du cordon rouge à la poésie de ses trois pendentifs : une clé, une serrure en forme de cœur et une perle. Ensemble, ils symbolisent le mystère et l'attachement. L'élégance du fait main, pour des finitions que l'on ne retrouve pas ailleurs.",
+      "materials": "Cordon rouge, pendentifs clé et serrure-cœur dorés, perle.",
+      "options": "longueur",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#b3262e"
+        ],
+        "pendant": "heart",
+        "bg": [
+          "#f3e8e2",
+          "#e6cdc3"
+        ]
+      }
+    },
+    {
+      "handle": "sautoir-rouge-love",
+      "title": "Sautoir Rouge Love Double Cœur",
+      "collection": "rouge-love",
+      "category": "sautoirs",
+      "price": 75,
+      "tags": [
+        "nouveau"
+      ],
+      "excerpt": "Deux cœurs, une longueur bohème.",
+      "description": "La version longue de Rouge Love : deux cœurs dorés glissent librement sur un fil rouge, pour un jeu de superposition tout en mouvement.",
+      "materials": "Fil ciré rouge, deux pendentifs cœur en laiton doré.",
+      "options": "sautoir",
+      "art": {
+        "type": "long",
+        "beads": [
+          "#b3262e"
+        ],
+        "pendant": "heart",
+        "bg": [
+          "#f2e6e0",
+          "#e3c6bb"
+        ]
+      }
+    },
+    {
+      "handle": "bracelet-rouge-love",
+      "title": "Bracelet Rouge Love",
+      "collection": "rouge-love",
+      "category": "bracelets",
+      "price": 35,
+      "tags": [],
+      "excerpt": "Le fil rouge, au poignet.",
+      "description": "Un fil rouge délicat ponctué d'un minuscule cœur doré. À offrir, à s'offrir, à ne plus quitter.",
+      "materials": "Fil ciré rouge, breloque cœur en laiton doré, nœud coulissant.",
+      "options": "bracelet",
+      "art": {
+        "type": "bracelet",
+        "beads": [
+          "#b3262e"
+        ],
+        "pendant": "heart",
+        "bg": [
+          "#f4ebe6",
+          "#e8d2ca"
+        ]
+      }
+    },
+    {
+      "handle": "collier-la-nacree",
+      "title": "Collier La Nacrée",
+      "collection": "la-nacree",
+      "category": "colliers",
+      "price": 89,
+      "tags": [
+        "piece-unique",
+        "best-seller"
+      ],
+      "excerpt": "Une perle au creux d'un coquillage nacré, un dégradé de perles scintillantes.",
+      "description": "Chaque détail a été pensé, assemblé et façonné à la main avec minutie. Une perle logée au creux de la nacre naturelle d'un coquillage, sublimée par un délicat dégradé de perles scintillantes, montée sur une chaîne dorée. Parce que la nature ne crée jamais deux fois la même chose, ce collier est une pièce unique : il n'en existera jamais un second identique au vôtre.",
+      "materials": "Coquillage naturel nacré, perle, perles facettées corail en dégradé, chaîne dorée.",
+      "options": "longueur",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#d9774f"
+        ],
+        "pendant": "nacre",
+        "bg": [
+          "#f4ebe2",
+          "#e8d4c0"
+        ]
+      }
+    },
+    {
+      "handle": "ras-de-cou-la-nacree",
+      "title": "Ras-de-cou Nacré",
+      "collection": "la-nacree",
+      "category": "ras-de-cou",
+      "price": 65,
+      "tags": [],
+      "excerpt": "Perles nacrées, éclat d'été.",
+      "description": "Une ligne de perles nacrées alternées de corail, à porter seule ou avec le collier La Nacrée pour un effet superposé.",
+      "materials": "Perles nacrées et perles de verre corail, fermoir doré.",
+      "options": "ras-de-cou",
+      "art": {
+        "type": "choker",
+        "beads": [
+          "#efe4d6",
+          "#d9774f"
+        ],
+        "pendant": null,
+        "bg": [
+          "#f5ede4",
+          "#eadbcb"
+        ]
+      }
+    },
+    {
+      "handle": "boucles-la-nacree",
+      "title": "Boucles La Nacrée",
+      "collection": "la-nacree",
+      "category": "boucles-d-oreilles",
+      "price": 49,
+      "tags": [
+        "nouveau"
+      ],
+      "excerpt": "Deux gouttes de nacre en suspension.",
+      "description": "Des pendants légers : une perle corail, une goutte de nacre. Juste ce qu'il faut de lumière.",
+      "materials": "Nacre, perle de verre corail, crochets dorés.",
+      "options": "unique",
+      "art": {
+        "type": "earrings",
+        "beads": [
+          "#d9774f"
+        ],
+        "pendant": "nacre",
+        "bg": [
+          "#f4ece4",
+          "#e7d6c6"
+        ]
+      }
+    },
+    {
+      "handle": "collier-bronze",
+      "title": "Collier Bronze",
+      "collection": "bronze",
+      "category": "colliers",
+      "price": 69,
+      "tags": [
+        "best-seller"
+      ],
+      "excerpt": "L'illusion parfaite : des perles de verre au fini bronze, sur un fil invisible.",
+      "description": "Un collier en bronze ? Non, not really. L'illusion parfaite : des perles de verre massives au fini bronze, lourdes de caractère et éclatantes de lumière. Chaque perle est choisie pour créer un contraste saisissant sur un fil invisible. Rien de mieux pour structurer et raviver une tenue blanche, beige, rose ou un total look lin.",
+      "materials": "Perles de verre massives au fini bronze, fil invisible.",
+      "options": "longueur",
+      "art": {
+        "type": "cluster",
+        "beads": [
+          "#8c4f27",
+          "#a8673a"
+        ],
+        "pendant": null,
+        "bg": [
+          "#efe5d8",
+          "#dcc6ab"
+        ]
+      }
+    },
+    {
+      "handle": "collier-bronze-gouttes",
+      "title": "Collier Bronze Gouttes",
+      "collection": "bronze",
+      "category": "colliers",
+      "price": 79,
+      "tags": [
+        "nouveau"
+      ],
+      "excerpt": "Né d'un coup de foudre pour des perles couleur bronze.",
+      "description": "La simplicité. Un vrai coup de cœur pour ces perles couleur bronze, assemblées au fil de l'inspiration pour créer un bijou simple, beau et facile à porter. Des reflets bronze parfaits pour capter la lumière naturelle, avec du lin comme avec une couleur sombre.",
+      "materials": "Perles de verre facettées au fini bronze, pampilles, fil invisible.",
+      "options": "longueur",
+      "art": {
+        "type": "long",
+        "beads": [
+          "#8c4f27",
+          "#a8673a",
+          "#c6a15b"
+        ],
+        "pendant": "drop",
+        "bg": [
+          "#ede2d3",
+          "#d8c0a2"
+        ]
+      }
+    },
+    {
+      "handle": "bracelet-bronze",
+      "title": "Bracelet Bronze",
+      "collection": "bronze",
+      "category": "bracelets",
+      "price": 39,
+      "tags": [],
+      "excerpt": "Le reflet cuivré, au poignet.",
+      "description": "Un rang de perles bronze, ponctué d'une perle dorée. Se porte seul ou en accumulation.",
+      "materials": "Perles de verre bronze, perle dorée, fil élastique renforcé.",
+      "options": "bracelet",
+      "art": {
+        "type": "bracelet",
+        "beads": [
+          "#8c4f27",
+          "#a8673a"
+        ],
+        "pendant": null,
+        "bg": [
+          "#f0e6da",
+          "#dfcab1"
+        ]
+      }
+    },
+    {
+      "handle": "collier-grey-shades",
+      "title": "Collier Grey Shades",
+      "collection": "grey-shades",
+      "category": "colliers",
+      "price": 72,
+      "tags": [
+        "piece-unique",
+        "edition-limitee"
+      ],
+      "excerpt": "Un coquillage breton, une perle grise, des rocailles métallisées.",
+      "description": "Unique, artisanal, et d'une beauté brute. Une pièce irrépétible, centrée sur un véritable coquillage cueilli sur les plages de Bretagne, rehaussé d'une perle grise et brodé de rocailles métallisées. Gris, ton sur ton. Pièce unique, en édition très limitée.",
+      "materials": "Coquillage cueilli en Bretagne, perle grise, rocailles métallisées.",
+      "options": "longueur",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#8a8d91",
+          "#5e6166"
+        ],
+        "pendant": "stone",
+        "bg": [
+          "#eeece8",
+          "#d8d5cf"
+        ]
+      }
+    },
+    {
+      "handle": "boucles-grey-shades",
+      "title": "Boucles Grey Shades",
+      "collection": "grey-shades",
+      "category": "boucles-d-oreilles",
+      "price": 45,
+      "tags": [],
+      "excerpt": "Gris perle et or, en pendants.",
+      "description": "Deux perles grises surmontées d'un anneau doré. Faciles à porter, du matin au soir.",
+      "materials": "Perles de verre grises, anneaux et crochets dorés.",
+      "options": "unique",
+      "art": {
+        "type": "earrings",
+        "beads": [
+          "#8a8d91"
+        ],
+        "pendant": "coin",
+        "bg": [
+          "#efedea",
+          "#dcd9d4"
+        ]
+      }
+    },
+    {
+      "handle": "collier-texas-stones",
+      "title": "Collier Texas Stones",
+      "collection": "texas-stones",
+      "category": "colliers",
+      "price": 119,
+      "tags": [
+        "piece-unique",
+        "nouveau"
+      ],
+      "excerpt": "Pierres vertes et breloques dorées. Un collier, quatre façons de le porter.",
+      "description": "L'union de la pureté et de la fraîcheur des pierres à la sophistication et à l'éclat du doré. Un modèle unique, et un collier qui se porte de quatre façons : court avec deux rangs, long en bandoulière, en sautoir avec les grosses breloques, ou en sautoir avec les petites breloques.",
+      "materials": "Pierres vertes, breloques dorées (étoile, feuilles, médailles), fermoirs modulables.",
+      "options": "longueur",
+      "art": {
+        "type": "multi",
+        "beads": [
+          "#6f9c7f",
+          "#9dbf9c",
+          "#c6a15b"
+        ],
+        "pendant": null,
+        "bg": [
+          "#f1e5d3",
+          "#dfc6a2"
+        ]
+      }
+    },
+    {
+      "handle": "bracelet-texas-stones",
+      "title": "Bracelet Texas Stones",
+      "collection": "texas-stones",
+      "category": "bracelets",
+      "price": 45,
+      "tags": [],
+      "excerpt": "Pierres vertes et breloque dorée.",
+      "description": "La palette Texas Stones en version bracelet : pierres vertes et une breloque dorée.",
+      "materials": "Pierres vertes, breloque dorée, fil élastique renforcé.",
+      "options": "bracelet",
+      "art": {
+        "type": "bracelet",
+        "beads": [
+          "#6f9c7f",
+          "#9dbf9c"
+        ],
+        "pendant": "coin",
+        "bg": [
+          "#f2e7d7",
+          "#e2cdaf"
+        ]
+      }
+    },
+    {
+      "handle": "collier-coeur-de-l-ocean",
+      "title": "Collier Le cœur de l'Océan",
+      "collection": "coeur-de-l-ocean",
+      "category": "colliers",
+      "price": 85,
+      "tags": [
+        "piece-unique"
+      ],
+      "excerpt": "Un morceau d'océan à porter sur soi.",
+      "description": "Porter ce bijou, c'est porter un morceau d'océan, un fragment d'artisanat. Un coquillage doré cueilli sur les plages de Bretagne, une perle grise en son cœur, un long fil de rocailles aux reflets d'acier. Vous ne trouverez pas un autre modèle identique.",
+      "materials": "Coquillage de Bretagne, perle grise, rocailles métallisées.",
+      "options": "longueur",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#2b5c7e",
+          "#8a8d91"
+        ],
+        "pendant": "shell",
+        "bg": [
+          "#e9eef0",
+          "#d0dbe1"
+        ]
+      }
+    },
+    {
+      "handle": "ras-de-cou-ocean",
+      "title": "Ras-de-cou Océan",
+      "collection": "coeur-de-l-ocean",
+      "category": "ras-de-cou",
+      "price": 62,
+      "tags": [],
+      "excerpt": "Bleu profond, éclat doré.",
+      "description": "Une ligne serrée de perles bleu marine et or, à porter seule ou avec le pendentif Le cœur de l'Océan.",
+      "materials": "Perles de verre bleu marine, perles dorées, fermoir doré.",
+      "options": "ras-de-cou",
+      "art": {
+        "type": "choker",
+        "beads": [
+          "#1f4766",
+          "#c6a15b"
+        ],
+        "pendant": null,
+        "bg": [
+          "#e8edf0",
+          "#d2dce2"
+        ]
+      }
+    },
+    {
+      "handle": "collier-ambre-d-automne",
+      "title": "Collier Ambre d'Automne",
+      "collection": "edition-fall",
+      "category": "colliers",
+      "price": 79,
+      "tags": [
+        "nouveau",
+        "edition-limitee"
+      ],
+      "excerpt": "Ambre chaud et feuille d'or.",
+      "description": "Des perles ambrées et une petite feuille dorée : l'Édition Fall capture la lumière dorée des fins d'après-midi d'octobre.",
+      "materials": "Perles de verre ambre, breloque feuille en laiton doré.",
+      "options": "longueur",
+      "art": {
+        "type": "pendant",
+        "beads": [
+          "#b8692f",
+          "#d9a05b"
+        ],
+        "pendant": "leaf",
+        "bg": [
+          "#f1e4d2",
+          "#e0c49e"
+        ]
+      }
+    },
+    {
+      "handle": "sautoir-terracotta",
+      "title": "Sautoir Terracotta",
+      "collection": "edition-fall",
+      "category": "sautoirs",
+      "price": 89,
+      "tags": [
+        "nouveau",
+        "edition-limitee"
+      ],
+      "excerpt": "Terre cuite et or, en longueur.",
+      "description": "Un sautoir aux tons terre cuite et brique, ponctué d'or. Se porte long, ou doublé autour du cou.",
+      "materials": "Perles de verre terracotta et brique, perles dorées, fil ciré.",
+      "options": "sautoir",
+      "art": {
+        "type": "long",
+        "beads": [
+          "#a4502a",
+          "#7a3f1d",
+          "#c6a15b"
+        ],
+        "pendant": null,
+        "bg": [
+          "#efe0cd",
+          "#dcbd98"
+        ]
+      }
+    },
+    {
+      "handle": "boucles-feuille-d-or",
+      "title": "Boucles Feuille d'Or",
+      "collection": "edition-fall",
+      "category": "boucles-d-oreilles",
+      "price": 52,
+      "tags": [
+        "edition-limitee"
+      ],
+      "excerpt": "Deux feuilles dorées qui dansent.",
+      "description": "Deux petites feuilles dorées suspendues à une perle ambre. Légères comme une feuille qui tombe.",
+      "materials": "Perles de verre ambre, breloques feuille et crochets dorés.",
+      "options": "unique",
+      "art": {
+        "type": "earrings",
+        "beads": [
+          "#b8692f"
+        ],
+        "pendant": "leaf",
+        "bg": [
+          "#f2e6d6",
+          "#e2c8a5"
+        ]
+      }
+    }
+  ]
+}
