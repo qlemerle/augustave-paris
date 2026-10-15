@@ -40,10 +40,8 @@ export function BespokeForm() {
       code = code || sessionStorage.getItem("augustave-creation");
     } catch {}
     const design = decodeDesign(code);
-    if (code && design) {
-      setCreation({ code, text: describeDesign(design) });
-      if (location.hash === "#demande") setTimeout(() => document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" }), 700);
-    }
+    if (code && design) setCreation({ code, text: describeDesign(design) });
+    if (location.hash === "#demande") setTimeout(() => document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" }), 700);
   }, []);
   return sent ? (
     <div className="notice">Votre messagerie s&apos;est ouverte avec votre demande. Nous vous répondons sous 48 h.</div>

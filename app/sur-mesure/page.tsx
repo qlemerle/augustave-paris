@@ -25,7 +25,40 @@ export default async function Page() {
         </p>
       </section>
 
-      <section className="section" style={{ paddingTop: 0 }}>
+      <section className="container paths" aria-label="Deux façons de créer votre bijou">
+        <div className="path-card reveal">
+          <span className="path-card__kicker">Tout de suite, en ligne</span>
+          <h2 className="display h3">Composer moi-même</h2>
+          <p>
+            Dans l&apos;atelier en ligne, vous choisissez le fil, la longueur, les perles et le pendentif. Le collier se dessine sous vos yeux, vous l&apos;essayez sur
+            votre photo et vous le commandez aussitôt.
+          </p>
+          <ul>
+            <li>Prix affiché en direct, de 45 à 250 €</li>
+            <li>Commande immédiate, expédié sous 2 à 3 semaines</li>
+          </ul>
+          <Link href="/atelier" className="btn btn--solid">
+            Ouvrir l&apos;atelier
+          </Link>
+        </div>
+        <div className="path-card path-card--navy reveal" style={{ ["--d" as string]: "120ms" }}>
+          <span className="path-card__kicker">Pièce unique, avec la créatrice</span>
+          <h2 className="display h3">Raconter mon histoire</h2>
+          <p>
+            Pour ce que l&apos;atelier ne sait pas faire : un prénom ou une date, une pierre de naissance, des perles choisies rien que pour vous, un bijou de
+            famille à transformer, un cadeau pour une occasion précise.
+          </p>
+          <ul>
+            <li>Une première proposition sous 48 h, avec croquis</li>
+            <li>À partir de 90 €, façonné en 2 à 3 semaines</li>
+          </ul>
+          <a href="#demande" className="btn btn--light">
+            Écrire à la créatrice
+          </a>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container split">
           <div className="split__media">
             <div className="reveal reveal--mask">
@@ -34,7 +67,7 @@ export default async function Page() {
           </div>
           <div className="split__body">
             <h2 className="display h2 reveal">
-              Trois étapes, <em>une histoire</em>
+              Avec la créatrice, <em>en trois étapes</em>
             </h2>
             <ol className="steps reveal" style={{ color: "var(--navy)" }}>
               {bespokeSteps.map((s) => (
@@ -49,9 +82,9 @@ export default async function Page() {
             <p className="lead reveal" style={{ fontSize: 15 }}>
               Délai de création : 2 à 3 semaines. Tarif à partir de 90 €, selon les perles et pendentifs choisis.
             </p>
-            <Link href="/atelier" className="btn btn--solid reveal" style={{ justifySelf: "start" }}>
-              Composer mon collier dans l&apos;atelier
-            </Link>
+            <a href="#demande" className="btn btn--solid reveal" style={{ justifySelf: "start" }}>
+              Raconter mon histoire
+            </a>
           </div>
         </div>
       </section>

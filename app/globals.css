@@ -4203,3 +4203,95 @@ body:has(.header--hidden) .atelier__stage {
     bottom: 16px;
   }
 }
+
+/* Sur-mesure : deux façons de créer (atelier en ligne / avec la créatrice) */
+.paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-bottom: clamp(24px, 4vw, 48px);
+}
+
+.path-card {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  padding: clamp(26px, 3.4vw, 44px);
+  border: 1px solid var(--line);
+  background: var(--white);
+  color: var(--ink);
+}
+
+.path-card--navy {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--ivory);
+}
+
+.path-card__kicker {
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--gold-deep);
+}
+
+.path-card--navy .path-card__kicker {
+  color: var(--gold-light);
+}
+
+.path-card h2,
+.path-card p {
+  margin: 0;
+}
+
+.path-card p {
+  line-height: 1.65;
+  opacity: 0.85;
+}
+
+.path-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+.path-card li::before {
+  content: "◆";
+  margin-right: 10px;
+  font-size: 0.6em;
+  vertical-align: 2px;
+  color: var(--gold);
+}
+
+.path-card .btn {
+  justify-self: start;
+  margin-top: 8px;
+}
+
+.atelier-more {
+  padding-top: 8px;
+  padding-bottom: 56px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.atelier-more button {
+  font: inherit;
+  color: var(--navy);
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.atelier-more a {
+  color: var(--navy);
+}
+
+@media (max-width: 800px) {
+  .paths {
+    grid-template-columns: 1fr;
+  }
+}

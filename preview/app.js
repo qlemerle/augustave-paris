@@ -432,8 +432,9 @@
   function atelierPage() {
     return `
     <section class="container page-hero"><h1 class="display h1">L'atelier</h1>
-      <p class="lead">Choisissez le fil, la longueur, vos perles et un pendentif : votre collier se compose sous vos yeux. Envoyez-le ensuite à la créatrice, qui le réalise à la main.</p></section>
-    <section class="container atelier-page"><div data-atelier></div></section>`;
+      <p class="lead">Choisissez le fil, la longueur, vos perles et un pendentif : votre collier se compose sous vos yeux. Commandez-le directement, la créatrice le réalise à la main.</p></section>
+    <section class="container atelier-page"><div data-atelier></div></section>
+    <section class="container atelier-more"><p>Un prénom à graver, une pierre de naissance, des perles qui ne sont pas ici ? <button type="button" class="link-underline" data-goto-demande>Racontez votre histoire à la créatrice</button>, elle imagine la pièce avec vous.</p></section>`;
   }
   function mountAtelierPage(params) {
     const el = app.querySelector("[data-atelier]");
@@ -478,13 +479,23 @@
     return `
     <section class="container page-hero"><h1 class="display h1">Édition <em>Votre Histoire</em></h1>
       <p class="lead">On crée ensemble votre collier sur-mesure. Une pièce unique, imaginée à partir de ce qui compte pour vous, et façonnée à la main dans notre atelier.</p></section>
-    <section class="section" style="padding-top:0"><div class="container split">
+    <section class="container paths" aria-label="Deux façons de créer votre bijou">
+      <div class="path-card reveal"><span class="path-card__kicker">Tout de suite, en ligne</span><h2 class="display h3">Composer moi-même</h2>
+        <p>Dans l'atelier en ligne, vous choisissez le fil, la longueur, les perles et le pendentif. Le collier se dessine sous vos yeux, vous l'essayez sur votre photo et vous le commandez aussitôt.</p>
+        <ul><li>Prix affiché en direct, de 45 à 250 €</li><li>Commande immédiate, expédié sous 2 à 3 semaines</li></ul>
+        <a href="${L("/atelier")}" class="btn btn--solid">Ouvrir l'atelier</a></div>
+      <div class="path-card path-card--navy reveal" style="--d:120ms"><span class="path-card__kicker">Pièce unique, avec la créatrice</span><h2 class="display h3">Raconter mon histoire</h2>
+        <p>Pour ce que l'atelier ne sait pas faire : un prénom ou une date, une pierre de naissance, des perles choisies rien que pour vous, un bijou de famille à transformer, un cadeau pour une occasion précise.</p>
+        <ul><li>Une première proposition sous 48 h, avec croquis</li><li>À partir de 90 €, façonné en 2 à 3 semaines</li></ul>
+        <button type="button" class="btn btn--light" data-scroll="demande">Écrire à la créatrice</button></div>
+    </section>
+    <section class="section"><div class="container split">
       <div class="split__media"><div class="reveal reveal--mask">${media(colBy("la-nacree").art, "sm-1", { src: img("sur-mesure/atelier"), parallax: 0.1 })}</div></div>
       <div class="split__body">
-        <h2 class="display h2 reveal">Trois étapes, <em>une histoire</em></h2>
+        <h2 class="display h2 reveal">Avec la créatrice, <em>en trois étapes</em></h2>
         ${steps('style="color:var(--navy)"')}
         <p class="lead reveal" style="font-size:15px">Délai de création : 2 à 3 semaines. Tarif à partir de 90 €, selon les perles et pendentifs choisis.</p>
-        <a href="${L("/atelier")}" class="btn btn--solid reveal" style="justify-self:start">Composer mon collier dans l'atelier</a>
+        <button type="button" class="btn btn--solid reveal" style="justify-self:start" data-scroll="demande">Raconter mon histoire</button>
       </div>
     </div></section>
     <section class="section section--navy" id="demande"><div class="container split">
@@ -865,6 +876,14 @@
       return;
     }
     if (t.id === "cart-btn") return openCart(true);
+    if (t.hasAttribute("data-goto-demande")) {
+      go("/sur-mesure");
+      setTimeout(() => {
+        const form = document.getElementById("demande");
+        if (form) window.scrollTo({ top: form.getBoundingClientRect().top + scrollY - 40, behavior: "smooth" });
+      }, 1400);
+      return;
+    }
     if (t.id === "burger") {
       const open = !t.classList.contains("is-open");
       t.classList.toggle("is-open", open);

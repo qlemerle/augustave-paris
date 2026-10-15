@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Atelier } from "@/components/Atelier";
 
 export const metadata: Metadata = {
@@ -12,11 +13,20 @@ export default function Page() {
       <section className="container page-hero">
         <h1 className="display h1">L&apos;atelier</h1>
         <p className="lead">
-          Choisissez le fil, la longueur, vos perles et un pendentif : votre collier se compose sous vos yeux. Envoyez-le ensuite à la créatrice, qui le réalise à la main.
+          Choisissez le fil, la longueur, vos perles et un pendentif : votre collier se compose sous vos yeux. Commandez-le directement, la créatrice le réalise à la main.
         </p>
       </section>
       <section className="container atelier-page">
         <Atelier />
+      </section>
+      <section className="container atelier-more">
+        <p>
+          Un prénom à graver, une pierre de naissance, des perles qui ne sont pas ici ?{" "}
+          <Link href="/sur-mesure#demande" className="link-underline">
+            Racontez votre histoire à la créatrice
+          </Link>
+          , elle imagine la pièce avec vous.
+        </p>
       </section>
     </>
   );
