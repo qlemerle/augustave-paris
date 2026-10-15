@@ -422,7 +422,13 @@ button {
 .header__nav {
   display: flex;
   align-items: center;
-  gap: clamp(18px, 2.4vw, 38px);
+  gap: clamp(16px, 2.4vw, 38px);
+}
+
+@media (max-width: 1180px) {
+  .header__nav {
+    gap: 16px;
+  }
 }
 
 .header__nav--right {
@@ -437,6 +443,7 @@ button {
   line-height: 1.3;
   letter-spacing: 0.01em;
   padding: 8px 0;
+  white-space: nowrap;
 }
 
 .nav-link::after {
@@ -637,6 +644,57 @@ button {
   margin: 10px 0 0;
   font-size: 14px;
   letter-spacing: 0.01em;
+}
+
+/* Méga-menu des collections : une vignette par collection */
+.mega__cols {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 7), minmax(0, 1fr));
+  gap: 16px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.mega__col .media {
+  aspect-ratio: 4 / 5;
+}
+
+.mega__col span {
+  display: block;
+  margin-top: 12px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--gold-deep);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mega__col p {
+  margin: 2px 0 0;
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.2;
+  transition: color 0.3s;
+}
+
+.mega__col:hover p {
+  color: var(--gold-deep);
+}
+
+.mega__all {
+  grid-column: 1 / -1;
+  justify-self: end;
+  font-size: 14px;
+}
+
+@media (max-width: 1100px) {
+  .mega__cols {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mega__col .media {
+    aspect-ratio: 3 / 2;
+  }
 }
 
 /* Menu mobile */

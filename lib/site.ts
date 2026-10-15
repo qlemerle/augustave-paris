@@ -27,8 +27,8 @@ export const site = {
 
 export const nav = [
   { href: "/maison", label: "L'histoire" },
-  { href: "/boutique", label: "Boutique", mega: true },
-  { href: "/collections", label: "Collections" },
+  { href: "/boutique", label: "Boutique", mega: "boutique" },
+  { href: "/collections", label: "Collections", mega: "collections" },
   { href: "/sur-mesure", label: "Sur-mesure" },
   { href: "/atelier", label: "L'atelier" },
 ];

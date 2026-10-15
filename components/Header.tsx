@@ -73,7 +73,27 @@ export function Header({ categories, collections }: Props) {
               <span />
             </button>
             {nav.map((item) =>
-              item.mega ? (
+              item.mega === "collections" ? (
+                <div className="has-mega" key={item.href}>
+                  <Link href={item.href} className="nav-link" aria-current={pathname.startsWith(item.href) ? "page" : undefined}>
+                    {item.label}
+                  </Link>
+                  <div className="mega">
+                    <div className="container mega__cols" style={{ ["--n" as string]: collections.length }}>
+                      {collections.map((c) => (
+                        <Link href={`/collections/${c.handle}`} className="mega__col" key={c.handle}>
+                          <MediaClient image={c.image} art={c.art} seed={c.handle} alt={c.title} />
+                          <span>{c.kicker}</span>
+                          <p>{c.title}</p>
+                        </Link>
+                      ))}
+                      <Link href="/collections" className="mega__all link-underline">
+                        Toutes les collections
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ) : item.mega ? (
                 <div className="has-mega" key={item.href}>
                   <Link href={item.href} className="nav-link" aria-current={pathname.startsWith(item.href) ? "page" : undefined}>
                     {item.label}

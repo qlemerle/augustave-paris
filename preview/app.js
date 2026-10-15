@@ -607,7 +607,11 @@
         <button class="burger" id="burger" aria-label="Menu"><span></span><span></span></button>
         ${nav
           .map((item) =>
-            item.mega
+            item.mega === "collections"
+              ? `<div class="has-mega"><a href="${L(item.href)}" class="nav-link" data-nav="${item.href}">${item.label}</a>
+            <div class="mega"><div class="container mega__cols" style="--n:${collections.length}">${collections.map((c) => `<a href="${L("/collections/" + c.handle)}" class="mega__col">${media(c.art, c.handle, { src: img("collections/" + c.handle), alt: c.title })}<span>${esc(c.kicker)}</span><p>${esc(c.title)}</p></a>`).join("")}
+              <a href="${L("/collections")}" class="mega__all link-underline">Toutes les collections</a></div></div></div>`
+              : item.mega
               ? `<div class="has-mega"><a href="${L(item.href)}" class="nav-link" data-nav="${item.href}">${item.label}</a>
             <div class="mega"><div class="container mega__inner">
               <div><p class="eyebrow mega__title">Catégories</p><ul class="mega__list"><li><a href="${L("/boutique")}">Tous les bijoux</a></li>${categories.map((c) => `<li><a href="${L("/boutique/" + c.handle)}">${esc(c.title)}</a></li>`).join("")}</ul></div>
