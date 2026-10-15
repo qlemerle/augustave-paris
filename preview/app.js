@@ -7,6 +7,21 @@
   const { catalog, site, nav, heroSlides, promises, bespokeSteps, infoPages, story, images } = D;
   const FX = D.fx;
   const AT = D.atelier;
+  const SH = D.share;
+  // données de partage d'un bijou (lien direct vers sa fiche)
+  const shareData = (p) => {
+    const photo = img(`produits/${p.handle}-1`);
+    const col = colBy(p.collection);
+    return {
+      handle: p.handle,
+      title: p.title,
+      price: price(p.price),
+      collection: col ? "Collection " + col.title : "",
+      url: location.origin + location.pathname + "#/produit/" + p.handle,
+      image: photo ? new URL(photo, location.href).toString() : null,
+      art: photo ? null : jewelSvg(p.art, { seed: p.handle }),
+    };
+  };
   // photos disponibles : "produits/collier-rouge-love-1" -> "images/produits/collier-rouge-love-1.jpg"
   const IMG = {};
   images.forEach((f) => (IMG[f.replace(/\.[a-z]+$/, "")] = "images/" + f));
@@ -360,6 +375,13 @@
           </div>
         </div>
         <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li><li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li></ul>
+        <div class="share" data-share="${p.handle}"><span class="share__label">Partager</span><div class="share__row">
+          <button type="button" class="share__btn share__btn--main" data-share-story>En story Instagram</button>
+          <button type="button" class="share__btn" data-share-link>Envoyer le lien</button>
+          <a class="share__btn" data-share-wa target="_blank" rel="noreferrer" href="${esc(SH.shareUrls(shareData(p)).whatsapp)}">WhatsApp</a>
+          <a class="share__btn" data-share-pin target="_blank" rel="noreferrer" href="${esc(SH.shareUrls(shareData(p)).pinterest)}">Pinterest</a>
+          <button type="button" class="share__btn" data-share-copy>Copier le lien</button>
+        </div><p class="share__msg" aria-live="polite"></p></div>
         <div class="accordion">
           <details open><summary>Description</summary><div class="accordion__body"><p>${esc(p.description)}</p></div></details>
           <details><summary>Taille et dimensions</summary><div class="accordion__body">${p.tags.includes("piece-unique") ? "<p>Pièce unique : elle ne sera pas refaite à l'identique. Elle peut néanmoins inspirer une création sur-mesure.</p>" : ""}${p.dimensions ? `<p>${esc(p.dimensions)}</p>` : ""}<p>${esc(sizeGuide(p))}</p></div></details>
@@ -394,13 +416,9 @@
   function mountAtelierPage(params) {
     const el = app.querySelector("[data-atelier]");
     if (!el) return;
+    // la création suit l'adresse (#/atelier?d=…) sans ajouter d'entrée d'historique
     const setUrl = (code) => {
-      try {
-        const url = new URL(location.href);
-        if (code) url.searchParams.set("d", code);
-        else url.searchParams.delete("d");
-        history.replaceState(history.state, "", url);
-      } catch {}
+      if (code) setHash("/atelier?d=" + code, true);
     };
     atelierCleanup = AT.mountAtelier(el, {
       initial: AT.decodeDesign(params.get("d")) || undefined,
@@ -420,9 +438,9 @@
       },
       onSend: (code) => {
         creation = code;
-        setUrl(null);
         FX.curtainCover("Votre histoire", () => {
           current = "/sur-mesure";
+          setHash(current);
           route();
           FX.curtainReveal();
           const form = document.getElementById("demande");
@@ -694,16 +712,35 @@
 
   // ---------- Routeur ----------
   // Navigation interne (l'aperçu ne dépend pas de l'URL de la page hôte)
+  // Chaque page a sa propre adresse (…/#/produit/collier-rouge-love) : partageable, et le bouton
+  // « retour » du navigateur fonctionne.
   let current = "/";
+  const setHash = (path, replace) => {
+    try {
+      const url = location.pathname + location.search + "#" + path;
+      if (replace) history.replaceState(null, "", url);
+      else history.pushState(null, "", url);
+    } catch (e) {}
+  };
   function go(path, label) {
     const next = path || "/";
     if (next === current) return;
     FX.curtainCover(label || "", () => {
       current = next;
+      setHash(next);
       route();
       FX.curtainReveal();
     });
   }
+  window.addEventListener("popstate", () => {
+    const next = location.hash.startsWith("#/") ? decodeURI(location.hash.slice(1)) : "/";
+    if (next === current) return;
+    FX.curtainCover("", () => {
+      current = next;
+      route();
+      FX.curtainReveal();
+    });
+  });
   let fxCleanup = null;
 
   function route() {
@@ -819,6 +856,20 @@
       save();
       renderCart();
     }
+    const sh = t.closest("[data-share]");
+    if (sh && t.tagName === "BUTTON") {
+      const p = products.find((x) => x.handle === sh.dataset.share);
+      const msg = sh.querySelector(".share__msg");
+      const flash = (text) => { msg.textContent = text; setTimeout(() => (msg.textContent = ""), 3200); };
+      const dt = shareData(p);
+      if (t.hasAttribute("data-share-story")) {
+        t.disabled = true;
+        SH.shareStory(dt).then((r) => r === "downloaded" && flash("Image enregistrée : publiez-la en story depuis votre téléphone."), () => flash("Le partage n'a pas fonctionné, réessayez.")).finally(() => (t.disabled = false));
+      }
+      if (t.hasAttribute("data-share-link")) SH.shareLink(dt).then((r) => r === "copied" && flash("Lien copié."));
+      if (t.hasAttribute("data-share-copy")) SH.copyLink(dt.url).then((r) => flash(r === "copied" ? "Lien copié." : "Copie impossible."));
+      return;
+    }
     const pdp = t.closest("[data-pdp]");
     if (pdp) {
       const p = products.find((x) => x.handle === pdp.dataset.pdp);
@@ -871,10 +922,11 @@
   FX.initPreloader();
   document.getElementById("backdrop").addEventListener("click", () => openCart(false));
   renderCart();
-  // lien partagé depuis l'atelier : ?d=…
+  // adresse d'arrivée : #/page, ou ancien lien de l'atelier ?d=…
   try {
     const shared = new URLSearchParams(location.search).get("d");
-    if (shared && AT.decodeDesign(shared)) current = "/atelier?d=" + shared;
+    if (location.hash.startsWith("#/")) current = decodeURI(location.hash.slice(1));
+    else if (shared && AT.decodeDesign(shared)) current = "/atelier?d=" + shared;
   } catch {}
   route();
 })();

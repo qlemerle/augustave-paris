@@ -6,6 +6,8 @@ import { site } from "@/lib/site";
 import { Media } from "@/components/Media";
 import { AddToCart } from "@/components/AddToCart";
 import { ProductCard } from "@/components/ProductCard";
+import { ShareProduct } from "@/components/ShareProduct";
+import { formatPrice } from "@/lib/commerce/format";
 
 type Props = { params: Promise<{ handle: string }> };
 
@@ -104,6 +106,14 @@ export default async function Page({ params }: Props) {
             <li>Retours gratuits sous {site.returnsDays} jours</li>
             <li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li>
           </ul>
+          <ShareProduct
+            handle={product.handle}
+            title={product.title}
+            price={formatPrice(product.price)}
+            collection={collection?.title}
+            image={product.images[0]?.url ?? null}
+            art={product.art}
+          />
           <div className="accordion">
             <details open>
               <summary>Description</summary>

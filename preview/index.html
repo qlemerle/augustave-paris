@@ -438,8 +438,10 @@ button {
 
 .nav-link {
   position: relative;
-  font-size: 11.5px;
+  display: inline-block;
+  font-size: 14px;
   font-weight: 400;
+  line-height: 1.3;
   letter-spacing: 0.01em;
   padding: 8px 0;
 }
@@ -565,6 +567,8 @@ button {
 /* Méga-menu */
 .has-mega {
   position: static;
+  display: flex;
+  align-items: center;
 }
 
 .mega {
@@ -1403,7 +1407,6 @@ button {
 .collection-card__title {
   font-family: var(--serif);
   font-size: clamp(22px, 1.9vw, 28px);
-  white-space: nowrap;
   font-weight: 300;
   margin: 0;
   display: flex;
@@ -1627,8 +1630,9 @@ button {
 .footer__word {
   font-family: var(--serif);
   font-weight: 300;
-  font-size: clamp(54px, 13.5vw, 220px);
-  letter-spacing: 0.08em;
+  /* le mot entier tient dans la largeur, quel que soit l'écran */
+  font-size: clamp(40px, 11vw, 176px);
+  letter-spacing: 0.04em;
   line-height: 0.9;
   text-align: center;
   color: transparent;
@@ -2852,16 +2856,15 @@ html.is-intro .hero .eyebrow {
 
 .chapter__num {
   position: absolute;
-  left: 38%;
-  top: -0.32em;
+  left: -0.12em;
+  top: -0.42em;
   z-index: 0;
   font-family: var(--serif);
   font-size: clamp(140px, 22vw, 340px);
   font-weight: 300;
   line-height: 1;
   color: transparent;
-  -webkit-text-stroke: 1px rgba(228, 200, 141, 0.22);
-  transform: translateX(calc(var(--off, 0) * 180px));
+  -webkit-text-stroke: 1px rgba(228, 200, 141, 0.16);
   pointer-events: none;
 }
 
@@ -2893,8 +2896,8 @@ html.is-intro .hero .eyebrow {
   display: grid;
   gap: 22px;
   justify-items: start;
-  transform: translateX(calc(var(--off, 0) * -90px));
-  opacity: calc(1 - var(--a, 0) * 1.1);
+  opacity: calc(1 - var(--a, 0) * 1.6);
+  transition: opacity 0.2s linear;
 }
 
 .chapter__body .eyebrow {
@@ -4026,6 +4029,69 @@ body:has(.header--hidden) .atelier__stage {
     top: 12px;
     right: calc(var(--gutter) + 4px);
   }
+}
+
+/* dans le carrousel de l'accueil, les noms tiennent sur une ligne */
+.collections-rail .collection-card__title {
+  white-space: nowrap;
+}
+
+/* ---------- Partage d'un bijou ---------- */
+.share {
+  display: grid;
+  gap: 10px;
+  padding: 18px 0 4px;
+  border-top: 1px solid var(--line);
+}
+
+.share__label {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--navy);
+}
+
+.share__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.share__btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--navy);
+  transition: border-color 0.3s, background 0.3s, color 0.3s;
+}
+
+.share__btn:hover {
+  border-color: var(--navy);
+}
+
+.share__btn--main {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--ivory);
+}
+
+.share__btn--main:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+}
+
+.share__btn[disabled] {
+  opacity: 0.6;
+}
+
+.share__msg {
+  margin: 0;
+  min-height: 1.4em;
+  font-size: 13px;
+  color: var(--muted);
 }
 
 #shell-top, #shell-bottom { display: contents; }
@@ -5363,6 +5429,158 @@ function mountAtelier(el, opts = {}) {
 
 return { mountAtelier, decodeDesign, describeDesign };
 })();
+window.__DATA.share = (() => {
+// Partage des bijoux : story Instagram (image 1080 × 1920), partage natif du lien, copie du lien.
+// JavaScript pur, partagé par le site Next.js (components/ShareProduct.tsx) et l'aperçu statique.
+
+const NAVY = "#0e2340", GOLD = "#c6a15b", NACRE = "#f4f2ef", INK = "#172033", MUTED = "#62666d";
+
+const loadImg = (src) =>
+  new Promise((res, rej) => {
+    const i = new Image();
+    i.crossOrigin = "anonymous";
+    i.onload = () => res(i);
+    i.onerror = rej;
+    i.src = src;
+  });
+
+function wrap(g, text, maxW) {
+  const words = text.split(/\s+/), lines = [];
+  let line = "";
+  for (const w of words) {
+    const t = line ? line + " " + w : w;
+    if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+/**
+ * Dessine la story d'un bijou.
+ * @param {{ image?: string|null, art?: string|null, title: string, price: string, collection?: string, url: string }} p
+ * art : SVG de l'illustration de remplacement quand il n'y a pas de photo
+ */
+async function storyCanvas(p) {
+  const W = 1080, H = 1920;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const g = c.getContext("2d");
+  try { await Promise.all([document.fonts.load('400 80px "Bodoni Moda"'), document.fonts.load('400 36px "Jost"')]); } catch (e) {}
+  g.fillStyle = NACRE;
+  g.fillRect(0, 0, W, H);
+
+  // photo, recadrée comme object-fit: cover, dans un cadre
+  const fx = 70, fy = 150, fw = W - 140, fh = 1220;
+  let img = null;
+  try {
+    if (p.image) img = await loadImg(p.image);
+    else if (p.art) img = await loadImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(p.art));
+  } catch (e) {}
+  if (img) {
+    const k = Math.max(fw / img.width, fh / img.height);
+    g.save();
+    g.beginPath();
+    g.rect(fx, fy, fw, fh);
+    g.clip();
+    g.drawImage(img, fx + (fw - img.width * k) / 2, fy + (fh - img.height * k) / 2, img.width * k, img.height * k);
+    g.restore();
+  }
+
+  // marque
+  g.fillStyle = NAVY;
+  g.textAlign = "center";
+  g.font = '400 40px "Bodoni Moda", Georgia, serif';
+  g.fillText("A U G U S T A V E", W / 2, 96);
+  g.fillStyle = GOLD;
+  g.font = '400 22px "Jost", Arial, sans-serif';
+  g.fillText("P A R I S", W / 2, 128);
+
+  // texte
+  let y = fy + fh + 110;
+  if (p.collection) {
+    g.fillStyle = GOLD;
+    g.font = '400 34px "Jost", Arial, sans-serif';
+    g.fillText(p.collection, W / 2, y);
+    y += 86;
+  }
+  g.fillStyle = INK;
+  g.font = '400 76px "Bodoni Moda", Georgia, serif';
+  for (const line of wrap(g, p.title, W - 180).slice(0, 2)) {
+    g.fillText(line, W / 2, y);
+    y += 86;
+  }
+  g.fillStyle = MUTED;
+  g.font = '400 38px "Jost", Arial, sans-serif';
+  g.fillText(`${p.price} · fait main à Paris`, W / 2, y + 6);
+  g.fillStyle = NAVY;
+  g.font = '500 30px "Jost", Arial, sans-serif';
+  g.fillText("@augustave.paris", W / 2, H - 70);
+  return c;
+}
+
+const toFile = (c, name) =>
+  new Promise((r) => c.toBlob((b) => r(new File([b], name, { type: "image/jpeg" })), "image/jpeg", 0.92));
+
+function canShareFiles() {
+  try {
+    const f = new File([new Blob(["x"], { type: "image/jpeg" })], "x.jpg", { type: "image/jpeg" });
+    return !!(navigator.canShare && navigator.canShare({ files: [f] }));
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Story : partage natif de l'image sur mobile (Instagram, WhatsApp…), sinon téléchargement. */
+async function shareStory(p) {
+  const c = await storyCanvas(p);
+  const name = "augustave-" + (p.handle || "bijou") + ".jpg";
+  if (canShareFiles()) {
+    const file = await toFile(c, name);
+    try {
+      await navigator.share({ files: [file], text: `${p.title} · @augustave.paris ${p.url}` });
+      return "shared";
+    } catch (e) {
+      if (e && e.name === "AbortError") return "cancelled";
+    }
+  }
+  const a = document.createElement("a");
+  a.download = name;
+  a.href = c.toDataURL("image/jpeg", 0.92);
+  a.click();
+  return "downloaded";
+}
+
+/** Lien : feuille de partage du téléphone, sinon copie. */
+async function shareLink(p) {
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: p.title, text: `${p.title} · Augustave Paris`, url: p.url });
+      return "shared";
+    } catch (e) {
+      if (e && e.name === "AbortError") return "cancelled";
+    }
+  }
+  return copyLink(p.url);
+}
+
+async function copyLink(url) {
+  try {
+    await navigator.clipboard.writeText(url);
+    return "copied";
+  } catch (e) {
+    return "failed";
+  }
+}
+
+const shareUrls = (p) => ({
+  whatsapp: `https://wa.me/?text=${encodeURIComponent(`${p.title} · Augustave Paris ${p.url}`)}`,
+  pinterest: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(p.url)}&media=${encodeURIComponent(p.image || "")}&description=${encodeURIComponent(p.title + " · Augustave Paris")}`,
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(p.url)}`,
+});
+
+return { shareStory, shareLink, copyLink, shareUrls };
+})();
 </script>
 <script>
 // Aperçu statique du site Augustave Paris (une seule page HTML, navigation par #).
@@ -5374,6 +5592,21 @@ return { mountAtelier, decodeDesign, describeDesign };
   const { catalog, site, nav, heroSlides, promises, bespokeSteps, infoPages, story, images } = D;
   const FX = D.fx;
   const AT = D.atelier;
+  const SH = D.share;
+  // données de partage d'un bijou (lien direct vers sa fiche)
+  const shareData = (p) => {
+    const photo = img(`produits/${p.handle}-1`);
+    const col = colBy(p.collection);
+    return {
+      handle: p.handle,
+      title: p.title,
+      price: price(p.price),
+      collection: col ? "Collection " + col.title : "",
+      url: location.origin + location.pathname + "#/produit/" + p.handle,
+      image: photo ? new URL(photo, location.href).toString() : null,
+      art: photo ? null : jewelSvg(p.art, { seed: p.handle }),
+    };
+  };
   // photos disponibles : "produits/collier-rouge-love-1" -> "images/produits/collier-rouge-love-1.jpg"
   const IMG = {};
   images.forEach((f) => (IMG[f.replace(/\.[a-z]+$/, "")] = "images/" + f));
@@ -5727,6 +5960,13 @@ return { mountAtelier, decodeDesign, describeDesign };
           </div>
         </div>
         <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li><li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li></ul>
+        <div class="share" data-share="${p.handle}"><span class="share__label">Partager</span><div class="share__row">
+          <button type="button" class="share__btn share__btn--main" data-share-story>En story Instagram</button>
+          <button type="button" class="share__btn" data-share-link>Envoyer le lien</button>
+          <a class="share__btn" data-share-wa target="_blank" rel="noreferrer" href="${esc(SH.shareUrls(shareData(p)).whatsapp)}">WhatsApp</a>
+          <a class="share__btn" data-share-pin target="_blank" rel="noreferrer" href="${esc(SH.shareUrls(shareData(p)).pinterest)}">Pinterest</a>
+          <button type="button" class="share__btn" data-share-copy>Copier le lien</button>
+        </div><p class="share__msg" aria-live="polite"></p></div>
         <div class="accordion">
           <details open><summary>Description</summary><div class="accordion__body"><p>${esc(p.description)}</p></div></details>
           <details><summary>Taille et dimensions</summary><div class="accordion__body">${p.tags.includes("piece-unique") ? "<p>Pièce unique : elle ne sera pas refaite à l'identique. Elle peut néanmoins inspirer une création sur-mesure.</p>" : ""}${p.dimensions ? `<p>${esc(p.dimensions)}</p>` : ""}<p>${esc(sizeGuide(p))}</p></div></details>
@@ -5761,13 +6001,9 @@ return { mountAtelier, decodeDesign, describeDesign };
   function mountAtelierPage(params) {
     const el = app.querySelector("[data-atelier]");
     if (!el) return;
+    // la création suit l'adresse (#/atelier?d=…) sans ajouter d'entrée d'historique
     const setUrl = (code) => {
-      try {
-        const url = new URL(location.href);
-        if (code) url.searchParams.set("d", code);
-        else url.searchParams.delete("d");
-        history.replaceState(history.state, "", url);
-      } catch {}
+      if (code) setHash("/atelier?d=" + code, true);
     };
     atelierCleanup = AT.mountAtelier(el, {
       initial: AT.decodeDesign(params.get("d")) || undefined,
@@ -5787,9 +6023,9 @@ return { mountAtelier, decodeDesign, describeDesign };
       },
       onSend: (code) => {
         creation = code;
-        setUrl(null);
         FX.curtainCover("Votre histoire", () => {
           current = "/sur-mesure";
+          setHash(current);
           route();
           FX.curtainReveal();
           const form = document.getElementById("demande");
@@ -6061,16 +6297,35 @@ return { mountAtelier, decodeDesign, describeDesign };
 
   // ---------- Routeur ----------
   // Navigation interne (l'aperçu ne dépend pas de l'URL de la page hôte)
+  // Chaque page a sa propre adresse (…/#/produit/collier-rouge-love) : partageable, et le bouton
+  // « retour » du navigateur fonctionne.
   let current = "/";
+  const setHash = (path, replace) => {
+    try {
+      const url = location.pathname + location.search + "#" + path;
+      if (replace) history.replaceState(null, "", url);
+      else history.pushState(null, "", url);
+    } catch (e) {}
+  };
   function go(path, label) {
     const next = path || "/";
     if (next === current) return;
     FX.curtainCover(label || "", () => {
       current = next;
+      setHash(next);
       route();
       FX.curtainReveal();
     });
   }
+  window.addEventListener("popstate", () => {
+    const next = location.hash.startsWith("#/") ? decodeURI(location.hash.slice(1)) : "/";
+    if (next === current) return;
+    FX.curtainCover("", () => {
+      current = next;
+      route();
+      FX.curtainReveal();
+    });
+  });
   let fxCleanup = null;
 
   function route() {
@@ -6186,6 +6441,20 @@ return { mountAtelier, decodeDesign, describeDesign };
       save();
       renderCart();
     }
+    const sh = t.closest("[data-share]");
+    if (sh && t.tagName === "BUTTON") {
+      const p = products.find((x) => x.handle === sh.dataset.share);
+      const msg = sh.querySelector(".share__msg");
+      const flash = (text) => { msg.textContent = text; setTimeout(() => (msg.textContent = ""), 3200); };
+      const dt = shareData(p);
+      if (t.hasAttribute("data-share-story")) {
+        t.disabled = true;
+        SH.shareStory(dt).then((r) => r === "downloaded" && flash("Image enregistrée : publiez-la en story depuis votre téléphone."), () => flash("Le partage n'a pas fonctionné, réessayez.")).finally(() => (t.disabled = false));
+      }
+      if (t.hasAttribute("data-share-link")) SH.shareLink(dt).then((r) => r === "copied" && flash("Lien copié."));
+      if (t.hasAttribute("data-share-copy")) SH.copyLink(dt.url).then((r) => flash(r === "copied" ? "Lien copié." : "Copie impossible."));
+      return;
+    }
     const pdp = t.closest("[data-pdp]");
     if (pdp) {
       const p = products.find((x) => x.handle === pdp.dataset.pdp);
@@ -6238,10 +6507,11 @@ return { mountAtelier, decodeDesign, describeDesign };
   FX.initPreloader();
   document.getElementById("backdrop").addEventListener("click", () => openCart(false));
   renderCart();
-  // lien partagé depuis l'atelier : ?d=…
+  // adresse d'arrivée : #/page, ou ancien lien de l'atelier ?d=…
   try {
     const shared = new URLSearchParams(location.search).get("d");
-    if (shared && AT.decodeDesign(shared)) current = "/atelier?d=" + shared;
+    if (location.hash.startsWith("#/")) current = decodeURI(location.hash.slice(1));
+    else if (shared && AT.decodeDesign(shared)) current = "/atelier?d=" + shared;
   } catch {}
   route();
 })();
