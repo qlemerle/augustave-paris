@@ -422,6 +422,7 @@
     };
     atelierCleanup = AT.mountAtelier(el, {
       initial: AT.decodeDesign(params.get("d")) || undefined,
+      poseModel: new URL("models/pose_landmarker_lite.task", location.href).toString(),
       onChange: (code) => {
         current = "/atelier?d=" + code;
         setUrl(code);

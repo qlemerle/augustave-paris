@@ -89,6 +89,7 @@ ${html.replace("<div id=\"shell-top\">", "</head>\n<body>\n<div id=\"shell-top\"
 `;
   fs.writeFileSync(path.join(out, "index.html"), doc);
   fs.cpSync(path.join(root, "public/images"), path.join(out, "images"), { recursive: true });
+  fs.cpSync(path.join(root, "public/models"), path.join(out, "models"), { recursive: true });
   fs.copyFileSync(path.join(root, "public/favicon.png"), path.join(out, "favicon.png"));
   fs.writeFileSync(path.join(out, ".nojekyll"), "");
   console.log(`site autonome : ${out}`);

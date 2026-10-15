@@ -112,8 +112,11 @@ arrondi aux 5 €) et le dessin animé du collier.
   en attributs de ligne. Handle modifiable avec `SHOPIFY_ATELIER_HANDLE`.
 - « En parler d'abord avec la créatrice » ouvre le formulaire sur-mesure avec la création jointe.
 - « Essayer sur moi » : essayage virtuel sur un buste en velours ou sur une photo de la cliente
-  (elle reste dans le navigateur). Glisser, pincer, régler taille et inclinaison, enregistrer la photo
-  au format 4:5 ou la partager directement (Instagram, WhatsApp) sur mobile.
+  (elle reste dans le navigateur). MediaPipe Pose (chargé depuis jsDelivr, modèle dans
+  `public/models/`) repère épaules, bouche et oreilles ; `fitFromPose` en déduit la base du cou,
+  l'échelle (pixels par cm), l'inclinaison et la rotation du buste, et `drapeMarkup` dessine le collier
+  drapé à sa vraie longueur (ras-de-cou, collier, sautoir), avec la lumière de la photo. La cliente
+  peut ensuite l'ajuster du doigt, enregistrer la photo en 4:5 ou la partager (Instagram, WhatsApp).
 - Les perles et pendentifs sont aujourd'hui dessinés. Quand les photos des vraies perles arrivent,
   on ajuste couleurs, noms et prix dans `ATELIER.beads` / `ATELIER.pendants` (ou on remplace le
   dessin par la photo détourée).
