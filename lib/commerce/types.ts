@@ -57,7 +57,14 @@ export type Collection = {
   art?: JewelArt;
 };
 
-export type CartLineInput = { variantId: string; quantity: number };
+export type CartLineInput = {
+  variantId: string;
+  quantity: number;
+  /** Création de l'atelier : code du collier, prix recalculé côté serveur, description et lien */
+  atelier?: AtelierLine;
+};
+
+export type AtelierLine = { code: string; price: number; text: string; link: string };
 
 export type SortKey = "featured" | "price-asc" | "price-desc" | "new";
 

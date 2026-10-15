@@ -408,6 +408,16 @@
         current = "/atelier?d=" + code;
         setUrl(code);
       },
+      onOrder: ({ code, text, price: amount, thumb }) => {
+        const id = "atelier:" + code;
+        const ex = cart.find((l) => l.id === id);
+        if (ex) ex.qty += 1;
+        else cart.push({ id, handle: "atelier", title: "Ma création de l'atelier", variant: text, price: amount, qty: 1, thumb, href: "/atelier?d=" + code });
+        save();
+        renderCart(true);
+        openCart(true);
+        toast("Votre création a rejoint le panier");
+      },
       onSend: (code) => {
         creation = code;
         setUrl(null);
@@ -646,7 +656,8 @@
           ${cart
             .map((l) => {
               const p = products.find((x) => x.handle === l.handle);
-              return `<div class="line-item"><a href="${L("/produit/" + l.handle)}" data-close>${media(p?.art, l.handle)}</a>
+              const thumb = l.thumb ? `<div class="media"><img src="${l.thumb}" alt=""></div>` : media(p?.art, l.handle);
+              return `<div class="line-item"><a href="${L(l.href || "/produit/" + l.handle)}" data-close>${thumb}</a>
               <div><h3>${esc(l.title)}</h3><p>${esc(l.variant)}</p>
                 <div class="line-item__actions"><div class="qty"><button data-line="${l.id}" data-delta="-1">−</button><span>${l.qty}</span><button data-line="${l.id}" data-delta="1">+</button></div>
                 <button class="line-item__remove" data-line="${l.id}" data-delta="-999">Retirer</button></div></div>

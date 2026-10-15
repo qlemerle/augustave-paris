@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { decodeDesign, mountAtelier } from "@/lib/atelier.mjs";
+import { useCart } from "./cart/CartProvider";
 
 export const CREATION_KEY = "augustave-creation";
 
@@ -10,6 +11,9 @@ export const CREATION_KEY = "augustave-creation";
 export function Atelier() {
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const cart = useCart();
+  const add = useRef(cart.add);
+  add.current = cart.add;
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -21,6 +25,17 @@ export function Atelier() {
         url.searchParams.set("d", code);
         history.replaceState(history.state, "", url);
       },
+      onOrder: ({ code, text, price, thumb }: { code: string; text: string; price: number; thumb: string }) =>
+        add.current({
+          variantId: `atelier:${code}`,
+          handle: "atelier",
+          title: "Ma création de l'atelier",
+          variantTitle: text,
+          price,
+          currencyCode: "EUR",
+          image: { url: thumb, alt: text },
+          href: `/atelier?d=${code}`,
+        }),
       onSend: (code: string) => {
         try {
           sessionStorage.setItem(CREATION_KEY, code);

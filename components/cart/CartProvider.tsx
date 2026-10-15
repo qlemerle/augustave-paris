@@ -12,6 +12,8 @@ export type CartLine = {
   currencyCode: string;
   image?: Image | null;
   art?: JewelArt;
+  /** lien de la ligne (création de l'atelier) ; sinon la fiche produit */
+  href?: string;
   quantity: number;
 };
 

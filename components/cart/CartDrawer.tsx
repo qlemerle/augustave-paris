@@ -67,7 +67,7 @@ export function CartDrawer() {
               </div>
               {cart.lines.map((l) => (
                 <div className="line-item" key={l.variantId}>
-                  <Link href={`/produit/${l.handle}`} onClick={cart.close}>
+                  <Link href={l.href ?? `/produit/${l.handle}`} onClick={cart.close}>
                     <MediaClient image={l.image} art={l.art} seed={l.handle} alt={l.title} />
                   </Link>
                   <div>

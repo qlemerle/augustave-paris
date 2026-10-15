@@ -111,6 +111,7 @@ export const mockProvider: CommerceProvider = {
   },
   async createCheckout(lines, gift) {
     const count = lines.reduce((n, l) => n + l.quantity, 0);
-    return { checkoutUrl: `/commande-demo?articles=${count}${gift ? "&cadeau=1" : ""}` };
+    const creations = lines.filter((l) => l.atelier).length;
+    return { checkoutUrl: `/commande-demo?articles=${count}${creations ? `&creations=${creations}` : ""}${gift ? "&cadeau=1" : ""}` };
   },
 };

@@ -15,7 +15,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const p = await commerce.getProduct((await params).handle);
-  return p ? { title: p.title, description: p.excerpt, openGraph: p.images[0] ? { images: [p.images[0].url] } : undefined } : {};
+  if (!p) return {};
+  // balises lues par Instagram / Facebook (aperçu de lien, catalogue) et par Google
+  return {
+    title: p.title,
+    description: p.excerpt,
+    alternates: { canonical: `/produit/${p.handle}` },
+    openGraph: { title: p.title, description: p.excerpt, url: `/produit/${p.handle}`, images: p.images.slice(0, 4).map((i) => i.url) },
+  };
 }
 
 export default async function Page({ params }: Props) {
@@ -48,7 +55,16 @@ export default async function Page({ params }: Props) {
     name: product.title,
     description: product.description,
     brand: { "@type": "Brand", name: site.name },
-    offers: { "@type": "Offer", priceCurrency: product.price.currencyCode, price: product.price.amount, availability: "https://schema.org/InStock" },
+    sku: product.handle,
+    image: product.images.map((i) => new URL(i.url, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").toString()),
+    offers: {
+      "@type": "Offer",
+      url: new URL(`/produit/${product.handle}`, process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000").toString(),
+      priceCurrency: product.price.currencyCode,
+      price: product.price.amount,
+      itemCondition: "https://schema.org/NewCondition",
+      availability: "https://schema.org/InStock",
+    },
   };
 
   return (
@@ -149,6 +165,12 @@ export default async function Page({ params }: Props) {
           </div>
         </section>
       )}
+      {/* balises produit Open Graph (property=, que Next ne génère pas) : React les place dans le <head> */}
+      <meta property="product:price:amount" content={String(product.price.amount)} />
+      <meta property="product:price:currency" content={product.price.currencyCode} />
+      <meta property="product:availability" content="in stock" />
+      <meta property="product:brand" content={site.name} />
+      <meta property="product:retailer_item_id" content={product.handle} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>
   );

@@ -106,7 +106,14 @@ arrondi aux 5 €) et le dessin animé du collier.
 
 - La création est codée dans l'URL (`/atelier?d=chaine.collier.centre.nacre-corail.nacre.A`) :
   le lien se partage et rouvre exactement le même collier.
-- « Envoyer ma création » ouvre le formulaire sur-mesure avec la création jointe à la demande.
+- « Commander ma création » met le collier au panier, au prix calculé (recalculé côté serveur au paiement).
+  Avec Shopify : créer un produit `creation-atelier` (masqué de la boutique) avec une variante par palier
+  de prix (45 €, 50 €, 55 €… 250 €) ; la commande reçoit la description, le code et le lien du collier
+  en attributs de ligne. Handle modifiable avec `SHOPIFY_ATELIER_HANDLE`.
+- « En parler d'abord avec la créatrice » ouvre le formulaire sur-mesure avec la création jointe.
+- « Essayer sur moi » : essayage virtuel sur un buste en velours ou sur une photo de la cliente
+  (elle reste dans le navigateur). Glisser, pincer, régler taille et inclinaison, enregistrer la photo
+  au format 4:5 ou la partager directement (Instagram, WhatsApp) sur mobile.
 - Les perles et pendentifs sont aujourd'hui dessinés. Quand les photos des vraies perles arrivent,
   on ajuste couleurs, noms et prix dans `ATELIER.beads` / `ATELIER.pendants` (ou on remplace le
   dessin par la photo détourée).
@@ -123,6 +130,19 @@ python3 tools/catalogue/import_excel.py augustave-bijoux.xlsx   # Excel -> lib/c
 
 Une ligne sans référence crée un nouveau bijou ; une ligne supprimée retire le bijou. Nécessite `openpyxl`.
 Une fois Shopify branché, ce même fichier sert à créer ou mettre à jour les produits Shopify.
+
+## Vendre sur Instagram
+
+Deux voies, au choix :
+
+1. **Shopify (recommandé)** : installer le canal « Facebook & Instagram » dans Shopify, le relier au compte
+   professionnel Instagram @augustave.paris et à une Page Facebook. Le catalogue se synchronise tout seul ;
+   une fois la boutique validée par Meta, on identifie les bijoux dans les posts et stories.
+2. **Sans Shopify** : déclarer le flux `https://<domaine>/flux-instagram.csv` dans Meta Commerce Manager
+   (Catalogue > Sources de données > Flux planifié). Même format accepté par Google Merchant Center.
+
+Les fiches produits portent les balises `og:` et `product:` (prix, disponibilité, marque) et les données
+structurées schema.org, lues par Meta et Google.
 
 ## Option cadeau
 

@@ -1,7 +1,7 @@
 import "server-only";
 import catalog from "../mock/catalog.json";
 import { shopifyFetch } from "./client";
-import { CART_CREATE_MUTATION, COLLECTION_PRODUCTS_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCTS_QUERY } from "./queries";
+import { ATELIER_PRODUCT_QUERY, CART_CREATE_MUTATION, COLLECTION_PRODUCTS_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCTS_QUERY } from "./queries";
 import type { Category, Collection, CommerceProvider, Image, Product, SortKey } from "../types";
 
 // Correspondance Shopify -> site :
@@ -45,6 +45,14 @@ type ShopifyCollection = {
   kicker: { value: string } | null;
   accent: { value: string } | null;
 };
+
+const ATELIER_HANDLE = process.env.SHOPIFY_ATELIER_HANDLE || "creation-atelier";
+async function fetchAtelierVariants() {
+  const data = await shopifyFetch<{
+    product: { variants: { nodes: { id: string; availableForSale: boolean; price: { amount: string } }[] } } | null;
+  }>(ATELIER_PRODUCT_QUERY, { handle: ATELIER_HANDLE }, 300);
+  return (data.product?.variants.nodes ?? []).map((v) => ({ id: v.id, availableForSale: v.availableForSale, price: Number(v.price.amount) }));
+}
 
 const money = (m: Money) => ({ amount: Number(m.amount), currencyCode: m.currencyCode });
 const image = (i: ShopifyImage, fallbackAlt: string): Image => ({
@@ -126,7 +134,8 @@ export const shopifyProvider: CommerceProvider = {
       query: null,
       ...sortArgs(sort),
     });
-    const list = data.products.nodes.map(toProduct);
+    // le produit technique de l'atelier n'apparaît pas dans la boutique
+    const list = data.products.nodes.filter((p) => p.handle !== ATELIER_HANDLE).map(toProduct);
     return category ? list.filter((p) => p.category === category) : list;
   },
   async getProduct(handle) {
@@ -145,8 +154,24 @@ export const shopifyProvider: CommerceProvider = {
   },
   async createCheckout(lines, gift) {
     // L'option cadeau voyage dans la note et les attributs de la commande (visibles dans l'admin Shopify)
+    const atelierVariants = lines.some((l) => l.atelier) ? await fetchAtelierVariants() : [];
+    const toLine = (l: (typeof lines)[number]) => {
+      if (!l.atelier) return { merchandiseId: l.variantId, quantity: l.quantity };
+      const v = atelierVariants.find((x) => x.price === l.atelier!.price && x.availableForSale);
+      if (!v) throw new Error(`Atelier : aucune variante à ${l.atelier.price} € dans le produit « ${ATELIER_HANDLE} ».`);
+      return {
+        merchandiseId: v.id,
+        quantity: l.quantity,
+        // visibles sur la commande dans l'admin Shopify
+        attributes: [
+          { key: "Création", value: l.atelier.text },
+          { key: "Code", value: l.atelier.code },
+          { key: "Voir le collier", value: l.atelier.link },
+        ],
+      };
+    };
     const input = {
-      lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.quantity })),
+      lines: lines.map(toLine),
       ...(gift
         ? {
             note: gift.message ? `Cadeau : écrin et petit mot. « ${gift.message} »` : "Cadeau : écrin et petit mot.",

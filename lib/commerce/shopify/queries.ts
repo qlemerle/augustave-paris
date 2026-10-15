@@ -65,6 +65,15 @@ export const COLLECTIONS_QUERY = /* GraphQL */ `
   }
 `;
 
+// Produit « Création de l'atelier » : une variante par palier de prix (45 €, 50 €, 55 €…)
+export const ATELIER_PRODUCT_QUERY = /* GraphQL */ `
+  query AtelierProduct($handle: String!) {
+    product(handle: $handle) {
+      variants(first: 250) { nodes { id availableForSale price { amount } } }
+    }
+  }
+`;
+
 export const CART_CREATE_MUTATION = /* GraphQL */ `
   mutation CartCreate($input: CartInput!) {
     cartCreate(input: $input) {
