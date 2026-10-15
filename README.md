@@ -78,22 +78,40 @@ viennent directement de Shopify.
 
 ## Brancher Shopify
 
-1. Dans Shopify : Paramètres > Applications > Développer des applications > créer une application,
-   activer la **Storefront API** (lecture des produits, collections, et écriture du panier).
-2. Renseigner `.env.local` :
+La boutique Shopify `zv0abg-pj.myshopify.com` est déjà préparée (octobre 2026) :
+- les 7 collections (`rouge-love`, `la-nacree`, `bronze`, `grey-shades`, `texas-stones`, `coeur-de-l-ocean`,
+  `edition-fall`) avec leur texte, leur image et les métachamps `custom.surtitre` / `custom.couleur` ;
+- les 18 bijoux du fichier Excel, **en brouillon**, avec tailles en variantes, photos, badges en tags et
+  métachamps `custom.accroche` / `custom.materiaux` ;
+- le produit technique `creation-atelier` (actif, publié sur aucun canal) : 42 variantes de 45 € à 250 €
+  par pas de 5 € ;
+- les définitions des métachamps, lisibles par la Storefront API.
+
+Pour que le site lise la boutique :
+
+1. Dans Shopify : installer le canal de vente **Headless** (Shopify App Store, gratuit), créer une vitrine
+   et copier son **jeton d'accès public** (Storefront API).
+2. Publier sur ce canal Headless les bijoux prêts à la vente (passer le statut à « Actif ») et le produit
+   « Création de l'atelier ». Un produit en brouillon ou non publié sur ce canal reste invisible du site.
+3. Renseigner `.env.local` (ou les variables d'environnement de l'hébergeur) :
    ```
    COMMERCE_PROVIDER=shopify
-   SHOPIFY_STORE_DOMAIN=augustave-paris.myshopify.com
+   SHOPIFY_STORE_DOMAIN=zv0abg-pj.myshopify.com
    SHOPIFY_STOREFRONT_ACCESS_TOKEN=...
    ```
-3. Organiser le catalogue Shopify ainsi :
-   - **Catégorie** = champ « Type de produit » (Colliers, Sautoirs, Ras-de-cou, Bracelets, Boucles d'oreilles).
-   - **Collection** = collections Shopify avec les handles `rouge-love`, `la-nacree`, `bronze`… 
-   - **Tailles** = variantes (option « Longueur » ou « Tour de poignet »).
-   - **Badges** = tags `nouveau`, `best-seller`, `piece-unique`, `edition-limitee`.
-   - Métachamps facultatifs : produit `custom.materiaux`, `custom.accroche`, `custom.dimensions` ; collection `custom.surtitre`, `custom.couleur`.
 4. Le bouton « Passer commande » crée un panier Shopify et redirige vers le paiement Shopify
-   (CB, Apple Pay, PayPal… selon ce qui est activé dans Shopify).
+   (CB, Apple Pay, PayPal… selon ce qui est activé dans Shopify). L'abonnement Shopify d'essai doit être
+   remplacé par un forfait payant avant la première vente.
+
+Le branchement Shopify demande un hébergement Next.js (Vercel, Netlify…) : la version GitHub Pages est un
+site statique et garde le catalogue de démonstration.
+
+Organisation du catalogue, pour les bijoux ajoutés plus tard :
+- **Catégorie** = champ « Type de produit » (Colliers, Sautoirs, Ras-de-cou, Bracelets, Boucles d'oreilles).
+- **Collection** = une des collections ci-dessus.
+- **Tailles** = variantes (option « Longueur », « Tour de poignet » ou « Taille »).
+- **Badges** = tags `nouveau`, `best-seller`, `piece-unique`, `edition-limitee`.
+- Métachamps facultatifs : produit `custom.materiaux`, `custom.accroche`, `custom.dimensions` ; collection `custom.surtitre`, `custom.couleur`.
 
 Sans Shopify, le panier fonctionne et « Passer commande » mène à une page de démonstration.
 
