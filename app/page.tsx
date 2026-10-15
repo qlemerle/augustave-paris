@@ -75,7 +75,6 @@ export default async function Home() {
             </div>
           </div>
         </div>
-        <div className="hero__scroll" aria-hidden />
       </section>
 
       <Manifesto />
@@ -192,7 +191,7 @@ export default async function Home() {
               Toutes les collections
             </Link>
           </div>
-          <div className="collections-rail">
+          <div className="collections-rail" data-rail>
             {collections.map((c, i) => (
               <Link
                 key={c.handle}
@@ -207,6 +206,17 @@ export default async function Home() {
                 </div>
               </Link>
             ))}
+          </div>
+          <div className="rail-nav" aria-label="Parcourir les collections">
+            <div className="rail-nav__bar" data-rail-bar>
+              <span />
+            </div>
+            <button type="button" className="rail-nav__btn" data-rail-prev aria-label="Collections précédentes">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="M10 3 5 8l5 5" /></svg>
+            </button>
+            <button type="button" className="rail-nav__btn" data-rail-next aria-label="Collections suivantes">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2"><path d="m6 3 5 5-5 5" /></svg>
+            </button>
           </div>
         </div>
       </section>

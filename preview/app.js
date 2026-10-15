@@ -179,7 +179,6 @@
         </div>
       </div>
       <div class="hero__index"><span>Porté : collection <span data-hero-label>${esc(heroSlides[0].label)}</span></span></div>
-      <div class="hero__scroll" aria-hidden="true"></div>
     </section>
 
     ${manifestoBlock("L'histoire d'Augustave", true)}
@@ -222,7 +221,8 @@
 
     <section class="section"><div class="container">
       ${sectionHead("Univers", "Les collections", ["/collections", "Toutes les collections"])}
-      <div class="collections-rail">${collections.map((c, i) => collectionCard(c, i)).join("")}</div>
+      <div class="collections-rail" data-rail>${collections.map((c, i) => collectionCard(c, i)).join("")}</div>
+      <div class="rail-nav" aria-label="Parcourir les collections"><div class="rail-nav__bar" data-rail-bar><span></span></div><button type="button" class="rail-nav__btn" data-rail-prev aria-label="Collections précédentes"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 3 5 8l5 5"/></svg></button><button type="button" class="rail-nav__btn" data-rail-next aria-label="Collections suivantes"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="m6 3 5 5-5 5"/></svg></button></div>
     </div></section>
 
     <section class="section section--cream"><div class="container">
