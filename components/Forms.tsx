@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
+import { decodeDesign, describeDesign } from "@/lib/atelier.mjs";
 
 // Newsletter : à relier à Shopify (customerCreate avec acceptsMarketing) ou à Klaviyo / Brevo.
 export function NewsletterForm() {
@@ -29,6 +30,19 @@ export function NewsletterForm() {
 // Demande sur-mesure : ouvre la messagerie avec un e-mail prérempli (aucun serveur nécessaire).
 export function BespokeForm() {
   const [sent, setSent] = useState(false);
+  const [creation, setCreation] = useState<{ code: string; text: string } | null>(null);
+  // Création venue de l'atelier (?creation=… ou mémorisée pendant la visite)
+  useEffect(() => {
+    let code = new URLSearchParams(location.search).get("creation");
+    try {
+      code = code || sessionStorage.getItem("augustave-creation");
+    } catch {}
+    const design = decodeDesign(code);
+    if (code && design) {
+      setCreation({ code, text: describeDesign(design) });
+      if (location.hash === "#demande") setTimeout(() => document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" }), 700);
+    }
+  }, []);
   return sent ? (
     <div className="notice">Votre messagerie s&apos;est ouverte avec votre demande. Nous vous répondons sous 48 h.</div>
   ) : (
@@ -42,6 +56,7 @@ export function BespokeForm() {
           `E-mail : ${f.get("email")}`,
           `Type de bijou : ${f.get("type")}`,
           `Occasion : ${f.get("occasion")}`,
+          ...(creation ? ["", `Ma création : ${creation.text}`, `${location.origin}/atelier?d=${creation.code}`] : []),
           "",
           `${f.get("histoire")}`,
         ].join("\n");
@@ -81,9 +96,23 @@ export function BespokeForm() {
           </select>
         </div>
       </div>
+      {creation && (
+        <div className="creation-note">
+          <strong>Votre création de l&apos;atelier</strong>
+          <span>{creation.text}</span>
+          <a className="link-underline" href={`/atelier?d=${creation.code}`}>
+            La modifier
+          </a>
+        </div>
+      )}
       <div className="field">
         <label htmlFor="histoire">Votre histoire</label>
-        <textarea id="histoire" name="histoire" required placeholder="Couleurs, prénom, date, souvenir… racontez-nous." />
+        <textarea
+          id="histoire"
+          name="histoire"
+          required={!creation}
+          placeholder={creation ? "Un prénom, une date, pour qui est ce collier… dites-nous en un peu plus." : "Couleurs, prénom, date, souvenir… racontez-nous."}
+        />
       </div>
       <button className="btn btn--light" type="submit" style={{ justifySelf: "start" }}>
         Envoyer ma demande

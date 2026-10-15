@@ -28,17 +28,21 @@ const OPTIONS: Record<string, { name: string; values: string[] }> = {
   unique: { name: "Taille", values: ["Taille unique"] },
 };
 
-type RawProduct = (typeof catalog.products)[number];
+// champs facultatifs, renseignés depuis le fichier Excel (tools/catalogue/)
+type RawProduct = (typeof catalog.products)[number] & { compareAtPrice?: number; sizes?: string[]; dimensions?: string };
 
 function toProduct(p: RawProduct): Product {
   const unique = p.tags.includes("piece-unique");
-  const opt = unique ? { name: "Taille", values: ["Pièce unique"] } : OPTIONS[p.options] ?? OPTIONS.unique;
+  const base = OPTIONS[p.options] ?? OPTIONS.unique;
+  const opt = unique ? { name: "Taille", values: ["Pièce unique"] } : p.sizes?.length ? { name: base.name, values: p.sizes } : base;
   const price = { amount: p.price, currencyCode: "EUR" };
+  const compareAtPrice = p.compareAtPrice ? { amount: p.compareAtPrice, currencyCode: "EUR" } : null;
   const variants: ProductVariant[] = opt.values.map((v, i) => ({
     id: `mock-${p.handle}-${i + 1}`,
     title: v,
     availableForSale: true,
     price,
+    compareAtPrice,
   }));
   return {
     id: `mock-${p.handle}`,
@@ -47,6 +51,7 @@ function toProduct(p: RawProduct): Product {
     excerpt: p.excerpt,
     description: p.description,
     materials: p.materials,
+    dimensions: p.dimensions ?? null,
     category: p.category,
     collection: p.collection,
     tags: p.tags,
@@ -104,8 +109,8 @@ export const mockProvider: CommerceProvider = {
   async getCollection(handle) {
     return collections().find((c) => c.handle === handle) ?? null;
   },
-  async createCheckout(lines) {
+  async createCheckout(lines, gift) {
     const count = lines.reduce((n, l) => n + l.quantity, 0);
-    return { checkoutUrl: `/commande-demo?articles=${count}` };
+    return { checkoutUrl: `/commande-demo?articles=${count}${gift ? "&cadeau=1" : ""}` };
   },
 };

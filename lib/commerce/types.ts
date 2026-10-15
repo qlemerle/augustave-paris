@@ -27,6 +27,7 @@ export type Product = {
   excerpt: string;
   description: string;
   materials: string;
+  dimensions?: string | null; // taille du pendentif, des perles…
   category: string; // handle de catégorie (Shopify : productType)
   collection: string; // handle de collection principale
   tags: string[];
@@ -68,5 +69,8 @@ export interface CommerceProvider {
   getCollections(): Promise<Collection[]>;
   getCollection(handle: string): Promise<Collection | null>;
   /** Crée un panier côté boutique et renvoie l'URL de paiement. */
-  createCheckout(lines: CartLineInput[]): Promise<{ checkoutUrl: string }>;
+  createCheckout(lines: CartLineInput[], gift?: GiftOption | null): Promise<{ checkoutUrl: string }>;
 }
+
+/** Option cadeau du panier : écrin et petit mot écrit à la main (offerts). */
+export type GiftOption = { message: string };

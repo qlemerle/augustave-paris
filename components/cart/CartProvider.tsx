@@ -17,6 +17,9 @@ export type CartLine = {
 
 type CartCtx = {
   lines: CartLine[];
+  /** Option cadeau : null si non choisie */
+  gift: { message: string } | null;
+  setGift: (gift: { message: string } | null) => void;
   count: number;
   subtotal: number;
   isOpen: boolean;
@@ -31,9 +34,11 @@ type CartCtx = {
 
 const Ctx = createContext<CartCtx | null>(null);
 const STORAGE_KEY = "augustave-cart-v1";
+const GIFT_KEY = "augustave-gift-v1";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>([]);
+  const [gift, setGift] = useState<{ message: string } | null>(null);
   const [isOpen, setOpen] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const loaded = useRef(false);
@@ -43,6 +48,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) setLines(JSON.parse(raw));
+      const g = localStorage.getItem(GIFT_KEY);
+      if (g) setGift(JSON.parse(g));
     } catch {}
     loaded.current = true;
   }, []);
@@ -51,8 +58,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     if (!loaded.current) return;
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
+      if (gift) localStorage.setItem(GIFT_KEY, JSON.stringify(gift));
+      else localStorage.removeItem(GIFT_KEY);
     } catch {}
-  }, [lines]);
+  }, [lines, gift]);
 
   useEffect(() => {
     document.body.classList.toggle("no-scroll", isOpen);
@@ -79,6 +88,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<CartCtx>(
     () => ({
       lines,
+      gift,
+      setGift,
       count: lines.reduce((n, l) => n + l.quantity, 0),
       subtotal: lines.reduce((n, l) => n + l.quantity * l.price, 0),
       isOpen,
@@ -90,7 +101,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       remove: (id) => setQuantity(id, 0),
       clear: () => setLines([]),
     }),
-    [lines, isOpen, toast, add, setQuantity],
+    [lines, gift, isOpen, toast, add, setQuantity],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -27,6 +27,7 @@ type ShopifyProduct = {
   productType: string;
   tags: string[];
   materials: { value: string } | null;
+  dimensions: { value: string } | null;
   excerpt: { value: string } | null;
   options: { name: string }[];
   collections: { nodes: { handle: string }[] };
@@ -62,6 +63,7 @@ function toProduct(p: ShopifyProduct): Product {
     excerpt: p.excerpt?.value ?? firstSentence,
     description: p.description,
     materials: p.materials?.value ?? "",
+    dimensions: p.dimensions?.value ?? null,
     category: slugify(p.productType || ""),
     collection: p.collections.nodes.map((c) => c.handle).find((h) => !IGNORED_COLLECTIONS.has(h)) ?? "",
     tags: p.tags.map(slugify),
@@ -141,10 +143,23 @@ export const shopifyProvider: CommerceProvider = {
   async getCollection(handle) {
     return (await fetchCollections()).find((c) => c.handle === handle) ?? null;
   },
-  async createCheckout(lines) {
+  async createCheckout(lines, gift) {
+    // L'option cadeau voyage dans la note et les attributs de la commande (visibles dans l'admin Shopify)
+    const input = {
+      lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.quantity })),
+      ...(gift
+        ? {
+            note: gift.message ? `Cadeau : écrin et petit mot. « ${gift.message} »` : "Cadeau : écrin et petit mot.",
+            attributes: [
+              { key: "Cadeau", value: "Oui" },
+              ...(gift.message ? [{ key: "Petit mot", value: gift.message }] : []),
+            ],
+          }
+        : {}),
+    };
     const data = await shopifyFetch<{
       cartCreate: { cart: { checkoutUrl: string } | null; userErrors: { message: string }[] };
-    }>(CART_CREATE_MUTATION, { lines: lines.map((l) => ({ merchandiseId: l.variantId, quantity: l.quantity })) }, 0);
+    }>(CART_CREATE_MUTATION, { input }, 0);
     if (!data.cartCreate.cart) throw new Error(data.cartCreate.userErrors.map((e) => e.message).join(", "));
     return { checkoutUrl: data.cartCreate.cart.checkoutUrl };
   },

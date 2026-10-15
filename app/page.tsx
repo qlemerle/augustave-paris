@@ -174,9 +174,14 @@ export default async function Home() {
                 </li>
               ))}
             </ol>
-            <Link href="/sur-mesure" className="btn btn--light reveal">
-              Raconter mon histoire
-            </Link>
+            <div className="cta-row reveal">
+              <Link href="/atelier" className="btn btn--light">
+                Créer mon collier
+              </Link>
+              <Link href="/sur-mesure" className="btn btn--light">
+                Raconter mon histoire
+              </Link>
+            </div>
           </div>
         </div>
       </section>

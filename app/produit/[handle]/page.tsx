@@ -86,12 +86,23 @@ export default async function Page({ params }: Props) {
             <li>Fait main dans notre atelier parisien</li>
             <li>Livraison offerte dès {site.freeShippingFrom} €, dans un écrin Augustave</li>
             <li>Retours gratuits sous {site.returnsDays} jours</li>
+            <li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li>
           </ul>
           <div className="accordion">
             <details open>
               <summary>Description</summary>
               <div className="accordion__body">
                 <p>{product.description}</p>
+              </div>
+            </details>
+            <details>
+              <summary>Taille et dimensions</summary>
+              <div className="accordion__body">
+                {product.tags.includes("piece-unique") && (
+                  <p>Pièce unique : elle ne sera pas refaite à l&apos;identique. Elle peut néanmoins inspirer une création sur-mesure.</p>
+                )}
+                {product.dimensions && <p>{product.dimensions}</p>}
+                <p>{sizeGuide(product.optionName, product.variants.map((v) => v.title))}</p>
               </div>
             </details>
             {product.materials && (
@@ -141,4 +152,14 @@ export default async function Page({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
     </>
   );
+}
+
+// Repères de taille, selon le type d'option du bijou
+function sizeGuide(optionName: string, sizes: string[]) {
+  const list = sizes.filter((s) => !/unique/i.test(s)).join(", ");
+  if (/poignet/i.test(optionName))
+    return `Tailles proposées : ${list}. Mesurez votre tour de poignet et ajoutez 1 à 2 cm pour un bracelet qui bouge joliment.`;
+  if (/longueur/i.test(optionName) && list)
+    return `Longueurs proposées : ${list}. Repères : 38 à 40 cm se porte au ras du cou, 45 cm à la naissance du décolleté, 70 cm et plus en sautoir.`;
+  return "Taille unique, ajustée à la main dans notre atelier.";
 }

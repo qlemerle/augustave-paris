@@ -22,6 +22,7 @@ export const nav = [
   { href: "/boutique", label: "Boutique", mega: true },
   { href: "/collections", label: "Collections" },
   { href: "/sur-mesure", label: "Sur-mesure" },
+  { href: "/atelier", label: "L'atelier" },
 ];
 
 // Diapositives du héros de l'accueil. Déposer une photo dans public/images/accueil/

@@ -23,7 +23,10 @@ export function CartDrawer() {
   const checkout = () =>
     startTransition(async () => {
       setError(null);
-      const res = await startCheckout(cart.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity })));
+      const res = await startCheckout(
+        cart.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity })),
+        cart.gift,
+      );
       if ("checkoutUrl" in res) window.location.href = res.checkoutUrl;
       else setError(res.error);
     });
@@ -90,6 +93,30 @@ export function CartDrawer() {
               ))}
             </div>
             <div className="drawer__foot">
+              <div className={`gift ${cart.gift ? "is-on" : ""}`}>
+                <label className="gift__toggle">
+                  <input type="checkbox" checked={!!cart.gift} onChange={(e) => cart.setGift(e.target.checked ? { message: "" } : null)} />
+                  <span className="gift__box" aria-hidden />
+                  <span>
+                    <strong>C&apos;est pour offrir</strong>
+                    <small>Écrin cadeau et petit mot écrit à la main, offerts. Le prix n&apos;apparaît pas dans le colis.</small>
+                  </span>
+                </label>
+                {cart.gift && (
+                  <div className="gift__note">
+                    <label htmlFor="gift-message">Votre petit mot</label>
+                    <textarea
+                      id="gift-message"
+                      maxLength={240}
+                      rows={3}
+                      value={cart.gift.message}
+                      onChange={(e) => cart.setGift({ message: e.target.value })}
+                      placeholder="Joyeux anniversaire maman, avec tout notre amour…"
+                    />
+                    <span className="gift__count">{cart.gift.message.length} / 240</span>
+                  </div>
+                )}
+              </div>
               <div className="drawer__total">
                 <span>Sous-total</span>
                 <strong>{formatPrice(cart.subtotal)}</strong>

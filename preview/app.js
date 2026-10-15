@@ -6,6 +6,7 @@
   const D = window.__DATA;
   const { catalog, site, nav, heroSlides, promises, bespokeSteps, infoPages, story, images } = D;
   const FX = D.fx;
+  const AT = D.atelier;
   // photos disponibles : "produits/collier-rouge-love-1" -> "images/produits/collier-rouge-love-1.jpg"
   const IMG = {};
   images.forEach((f) => (IMG[f.replace(/\.[a-z]+$/, "")] = "images/" + f));
@@ -23,8 +24,16 @@
     bracelet: { name: "Tour de poignet", values: ["S · 15 cm", "M · 17 cm", "L · 19 cm"] },
     unique: { name: "Taille", values: ["Taille unique"] },
   };
+  // Repères de taille (même texte que app/produit/[handle]/page.tsx)
+  const sizeGuide = (p) => {
+    const list = p.variants.map((v) => v.title).filter((s) => !/unique/i.test(s)).join(", ");
+    if (/poignet/i.test(p.optionName)) return `Tailles proposées : ${list}. Mesurez votre tour de poignet et ajoutez 1 à 2 cm pour un bracelet qui bouge joliment.`;
+    if (/longueur/i.test(p.optionName) && list) return `Longueurs proposées : ${list}. Repères : 38 à 40 cm se porte au ras du cou, 45 cm à la naissance du décolleté, 70 cm et plus en sautoir.`;
+    return "Taille unique, ajustée à la main dans notre atelier.";
+  };
   const products = catalog.products.map((p) => {
-    const opt = p.tags.includes("piece-unique") ? { name: "Taille", values: ["Pièce unique"] } : OPTIONS[p.options] || OPTIONS.unique;
+    const base = OPTIONS[p.options] || OPTIONS.unique;
+    const opt = p.tags.includes("piece-unique") ? { name: "Taille", values: ["Pièce unique"] } : p.sizes && p.sizes.length ? { name: base.name, values: p.sizes } : base;
     return { ...p, optionName: opt.name, variants: opt.values.map((v, i) => ({ id: `mock-${p.handle}-${i + 1}`, title: v, price: p.price })) };
   });
   const categories = catalog.categories;
@@ -215,7 +224,7 @@
         <h2 class="display h2 reveal">Créons <em>ensemble</em> votre collier sur-mesure</h2>
         <p class="lead reveal">Un prénom, une date, les couleurs d'un souvenir. Nous imaginons avec vous une pièce unique, pensée pour vous ou pour celle que vous aimez.</p>
         ${steps()}
-        <a href="${L("/sur-mesure")}" class="btn btn--light reveal">Raconter mon histoire</a>
+        <div class="cta-row reveal"><a href="${L("/atelier")}" class="btn btn--light">Créer mon collier</a><a href="${L("/sur-mesure")}" class="btn btn--light">Raconter mon histoire</a></div>
       </div>
     </div></section>
 
@@ -338,7 +347,7 @@
           <h1 class="display pdp__title">${esc(p.title)}</h1></div>
         <p class="pdp__excerpt">${esc(p.excerpt)}</p>
         <div style="display:grid;gap:22px" data-pdp="${p.handle}">
-          <div class="pdp__price">${price(p.price)}</div>
+          <div class="pdp__price">${price(p.price)}${p.compareAtPrice ? `<s style="margin-left:12px;color:var(--muted);font-size:16px">${price(p.compareAtPrice)}</s>` : ""}</div>
           ${
             multi
               ? `<fieldset class="option-group"><legend>${esc(p.optionName)} : <span data-variant-label style="text-transform:none;letter-spacing:0">${esc(p.variants[0].title)}</span></legend>
@@ -350,9 +359,10 @@
             <button type="button" class="btn btn--solid" data-add>Ajouter au panier</button>
           </div>
         </div>
-        <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li></ul>
+        <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li><li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li></ul>
         <div class="accordion">
           <details open><summary>Description</summary><div class="accordion__body"><p>${esc(p.description)}</p></div></details>
+          <details><summary>Taille et dimensions</summary><div class="accordion__body">${p.tags.includes("piece-unique") ? "<p>Pièce unique : elle ne sera pas refaite à l'identique. Elle peut néanmoins inspirer une création sur-mesure.</p>" : ""}${p.dimensions ? `<p>${esc(p.dimensions)}</p>` : ""}<p>${esc(sizeGuide(p))}</p></div></details>
           <details><summary>Matières</summary><div class="accordion__body"><p>${esc(p.materials)}</p><p>Chaque perle étant posée à la main, de légères variations rendent votre bijou unique.</p></div></details>
           <details><summary>Entretien</summary><div class="accordion__body"><p>Retirez votre bijou avant la douche, la baignade ou le sport, et évitez le contact avec le parfum. Rangez-le à plat dans son écrin.</p><a href="${L("/infos/entretien")}" class="link-underline">Conseils d'entretien</a></div></details>
           <details><summary>Livraison & retours</summary><div class="accordion__body"><p>Expédition sous 2 à 3 jours ouvrés. Livraison offerte dès ${site.freeShippingFrom} €. Retours sous ${site.returnsDays} jours.</p></div></details>
@@ -366,6 +376,52 @@
     }`;
   }
 
+  // ---------- Atelier ----------
+  let creation = null; // code de la création envoyée depuis l'atelier
+  let atelierCleanup = null;
+  const creationNote = () => {
+    const dsg = creation && AT.decodeDesign(creation);
+    return dsg
+      ? `<div class="creation-note"><strong>Votre création de l'atelier</strong><span>${esc(AT.describeDesign(dsg))}</span><a class="link-underline" href="${L("/atelier?d=" + creation)}">La modifier</a></div>`
+      : "";
+  };
+  function atelierPage() {
+    return `
+    <section class="container page-hero"><h1 class="display h1">L'atelier</h1>
+      <p class="lead">Choisissez le fil, la longueur, vos perles et un pendentif : votre collier se compose sous vos yeux. Envoyez-le ensuite à la créatrice, qui le réalise à la main.</p></section>
+    <section class="container atelier-page"><div data-atelier></div></section>`;
+  }
+  function mountAtelierPage(params) {
+    const el = app.querySelector("[data-atelier]");
+    if (!el) return;
+    const setUrl = (code) => {
+      try {
+        const url = new URL(location.href);
+        if (code) url.searchParams.set("d", code);
+        else url.searchParams.delete("d");
+        history.replaceState(history.state, "", url);
+      } catch {}
+    };
+    atelierCleanup = AT.mountAtelier(el, {
+      initial: AT.decodeDesign(params.get("d")) || undefined,
+      onChange: (code) => {
+        current = "/atelier?d=" + code;
+        setUrl(code);
+      },
+      onSend: (code) => {
+        creation = code;
+        setUrl(null);
+        FX.curtainCover("Votre histoire", () => {
+          current = "/sur-mesure";
+          route();
+          FX.curtainReveal();
+          const form = document.getElementById("demande");
+          if (form) setTimeout(() => window.scrollTo({ top: form.getBoundingClientRect().top + scrollY - 40, behavior: "smooth" }), 400);
+        });
+      },
+    });
+  }
+
   function bespoke() {
     return `
     <section class="container page-hero"><h1 class="display h1">Édition <em>Votre Histoire</em></h1>
@@ -376,9 +432,10 @@
         <h2 class="display h2 reveal">Trois étapes, <em>une histoire</em></h2>
         ${steps('style="color:var(--navy)"')}
         <p class="lead reveal" style="font-size:15px">Délai de création : 2 à 3 semaines. Tarif à partir de 90 €, selon les perles et pendentifs choisis.</p>
+        <a href="${L("/atelier")}" class="btn btn--solid reveal" style="justify-self:start">Composer mon collier dans l'atelier</a>
       </div>
     </div></section>
-    <section class="section section--navy"><div class="container split">
+    <section class="section section--navy" id="demande"><div class="container split">
       <div class="split__body"><h2 class="display h2 reveal">Racontez-nous <em>votre histoire</em></h2>
         <p class="lead reveal">Nous revenons vers vous sous 48 h avec une première proposition.</p></div>
       <div class="reveal"><form class="form" data-form="bespoke">
@@ -386,7 +443,8 @@
           <div class="field"><label for="email">E-mail</label><input id="email" name="email" type="email" required></div></div>
         <div class="form__row"><div class="field"><label for="type">Bijou souhaité</label><select id="type" name="type"><option>Collier</option><option>Sautoir</option><option>Ras-de-cou</option><option>Bracelet</option><option>Boucles d'oreilles</option></select></div>
           <div class="field"><label for="occasion">Occasion</label><select id="occasion" name="occasion"><option>Pour moi</option><option>Un cadeau</option><option>Une naissance</option><option>Un mariage</option><option>Un anniversaire</option></select></div></div>
-        <div class="field"><label for="histoire">Votre histoire</label><textarea id="histoire" name="histoire" required placeholder="Couleurs, prénom, date, souvenir… racontez-nous."></textarea></div>
+        ${creationNote()}
+        <div class="field"><label for="histoire">Votre histoire</label><textarea id="histoire" name="histoire" ${creation ? "" : "required"} placeholder="${creation ? "Un prénom, une date, pour qui est ce collier… dites-nous en un peu plus." : "Couleurs, prénom, date, souvenir… racontez-nous."}"></textarea></div>
         <button class="btn btn--light" type="submit" style="justify-self:start">Envoyer ma demande</button>
       </form></div>
     </div></section>`;
@@ -534,11 +592,21 @@
   } catch (e) {
     cart = [];
   }
+  let gift = null; // option cadeau : { message }
+  try {
+    gift = JSON.parse(localStorage.getItem(KEY + "-gift") || "null");
+  } catch (e) {}
   const save = () => {
     try {
       localStorage.setItem(KEY, JSON.stringify(cart));
+      localStorage.setItem(KEY + "-gift", JSON.stringify(gift));
     } catch (e) {}
   };
+  const giftBlock = () => `<div class="gift ${gift ? "is-on" : ""}">
+      <label class="gift__toggle"><input type="checkbox" data-gift ${gift ? "checked" : ""}><span class="gift__box" aria-hidden="true"></span>
+        <span><strong>C'est pour offrir</strong><small>Écrin cadeau et petit mot écrit à la main, offerts. Le prix n'apparaît pas dans le colis.</small></span></label>
+      ${gift ? `<div class="gift__note"><label for="gift-message">Votre petit mot</label><textarea id="gift-message" data-gift-message maxlength="240" rows="3" placeholder="Joyeux anniversaire maman, avec tout notre amour…">${esc(gift.message)}</textarea><span class="gift__count">${gift.message.length} / 240</span></div>` : ""}
+    </div>`;
   let toastTimer;
 
   function addToCart(p, vi, qty) {
@@ -586,7 +654,7 @@
             })
             .join("")}
         </div>
-        <div class="drawer__foot"><div class="drawer__total"><span>Sous-total</span><strong>${price(subtotal)}</strong></div>
+        <div class="drawer__foot">${giftBlock()}<div class="drawer__total"><span>Sous-total</span><strong>${price(subtotal)}</strong></div>
           <p class="form-note" style="margin:0">Taxes incluses. Frais de livraison calculés à l'étape suivante.</p>
           <a class="btn btn--solid btn--block" href="${L("/commande-demo")}" data-close>Passer commande</a></div>`
     }`;
@@ -638,12 +706,15 @@
     else if (parts[0] === "collections") html = parts[1] ? collectionPage(parts[1]) : collectionsPage();
     else if (parts[0] === "produit") html = productPage(parts[1]);
     else if (parts[0] === "sur-mesure") html = bespoke();
+    else if (parts[0] === "atelier") html = atelierPage();
     else if (parts[0] === "maison") html = maison();
     else if (parts[0] === "infos") html = info(parts[1]);
     else if (parts[0] === "commande-demo") html = demo();
     else html = notFound();
 
     clearInterval(heroTimer);
+    if (atelierCleanup) atelierCleanup();
+    atelierCleanup = null;
     app.innerHTML = `<div class="page-enter">${html}</div>`;
     const isHome = !parts.length;
     const header = document.getElementById("header");
@@ -658,6 +729,7 @@
     if (fxCleanup) fxCleanup();
     fxCleanup = FX.initPageFx(document);
     if (isHome) startHero();
+    if (parts[0] === "atelier") mountAtelierPage(params);
   }
 
   function startHero(start = 0) {
@@ -753,7 +825,21 @@
       }
     }
   });
+  document.addEventListener("input", (e) => {
+    if (e.target.matches("[data-gift-message]")) {
+      gift = { message: e.target.value.slice(0, 240) };
+      e.target.parentNode.querySelector(".gift__count").textContent = `${gift.message.length} / 240`;
+      save();
+    }
+  });
   document.addEventListener("change", (e) => {
+    if (e.target.matches("[data-gift]")) {
+      gift = e.target.checked ? { message: "" } : null;
+      save();
+      renderCart();
+      if (gift) document.querySelector("[data-gift-message]")?.focus();
+      return;
+    }
     if (e.target.matches("[data-sort]")) {
       const c = e.target.dataset.sort;
       const v = e.target.value;
@@ -764,6 +850,7 @@
     const f = e.target;
     e.preventDefault();
     if (f.dataset.form === "newsletter") f.outerHTML = '<p class="lead" style="margin:0">Merci, vous êtes inscrite. À très vite dans votre boîte mail.</p>';
+    if (f.dataset.form === "bespoke") creation = null;
     if (f.dataset.form === "bespoke") f.outerHTML = '<div class="notice">Merci ! Dans le site final, votre demande nous est envoyée par e-mail et nous vous répondons sous 48 h.</div>';
   });
   window.addEventListener("scroll", onScroll, { passive: true });
@@ -773,5 +860,10 @@
   FX.initPreloader();
   document.getElementById("backdrop").addEventListener("click", () => openCart(false));
   renderCart();
+  // lien partagé depuis l'atelier : ?d=…
+  try {
+    const shared = new URLSearchParams(location.search).get("d");
+    if (shared && AT.decodeDesign(shared)) current = "/atelier?d=" + shared;
+  } catch {}
   route();
 })();

@@ -7,6 +7,7 @@ const PRODUCT_FIELDS = /* GraphQL */ `
     productType
     tags
     materials: metafield(namespace: "custom", key: "materiaux") { value }
+    dimensions: metafield(namespace: "custom", key: "dimensions") { value }
     excerpt: metafield(namespace: "custom", key: "accroche") { value }
     options(first: 1) { name }
     collections(first: 10) { nodes { handle } }
@@ -65,8 +66,8 @@ export const COLLECTIONS_QUERY = /* GraphQL */ `
 `;
 
 export const CART_CREATE_MUTATION = /* GraphQL */ `
-  mutation CartCreate($lines: [CartLineInput!]!) {
-    cartCreate(input: { lines: $lines }) {
+  mutation CartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
       cart { checkoutUrl }
       userErrors { field message }
     }

@@ -22,6 +22,7 @@ npm run build      # vérification de production
 | `/collections`, `/collections/<collection>` | Univers Rouge Love, La Nacrée, Bronze, Grey Shades, Texas Stones, Le cœur de l'Océan, Édition Fall |
 | `/produit/<handle>` | Fiche produit : galerie, tailles, quantité, ajout au panier, matières, entretien |
 | `/sur-mesure` | Édition Votre Histoire, avec formulaire de demande |
+| `/atelier` | Atelier interactif : on compose son collier (fil, longueur, perles, pendentif), il se dessine en direct |
 | `/maison` | Histoire de la marque |
 | `/infos/<page>` | Livraison & retours, entretien, CGV, mentions légales, confidentialité |
 
@@ -90,11 +91,43 @@ viennent directement de Shopify.
    - **Collection** = collections Shopify avec les handles `rouge-love`, `la-nacree`, `bronze`… 
    - **Tailles** = variantes (option « Longueur » ou « Tour de poignet »).
    - **Badges** = tags `nouveau`, `best-seller`, `piece-unique`, `edition-limitee`.
-   - Métachamps facultatifs : produit `custom.materiaux`, `custom.accroche` ; collection `custom.surtitre`, `custom.couleur`.
+   - Métachamps facultatifs : produit `custom.materiaux`, `custom.accroche`, `custom.dimensions` ; collection `custom.surtitre`, `custom.couleur`.
 4. Le bouton « Passer commande » crée un panier Shopify et redirige vers le paiement Shopify
    (CB, Apple Pay, PayPal… selon ce qui est activé dans Shopify).
 
 Sans Shopify, le panier fonctionne et « Passer commande » mène à une page de démonstration.
+
+## L'atelier sur-mesure
+
+`lib/atelier.mjs` (JavaScript pur, partagé par le site et l'aperçu) contient tout l'atelier :
+le choix des fils, longueurs, perles et pendentifs (`ATELIER`), les points de départ par collection
+(`presets`), le calcul de l'estimation (`priceOf` : prix du fil + perles + pendentif, minimum 45 €,
+arrondi aux 5 €) et le dessin animé du collier.
+
+- La création est codée dans l'URL (`/atelier?d=chaine.collier.centre.nacre-corail.nacre.A`) :
+  le lien se partage et rouvre exactement le même collier.
+- « Envoyer ma création » ouvre le formulaire sur-mesure avec la création jointe à la demande.
+- Les perles et pendentifs sont aujourd'hui dessinés. Quand les photos des vraies perles arrivent,
+  on ajuste couleurs, noms et prix dans `ATELIER.beads` / `ATELIER.pendants` (ou on remplace le
+  dessin par la photo détourée).
+
+## Prix et fiches produits depuis Excel
+
+Une ligne par bijou : prix, prix barré, tailles, badges, accroche, description, matières, dimensions.
+
+```bash
+python3 tools/catalogue/export_excel.py augustave-bijoux.xlsx   # catalogue -> Excel
+python3 tools/catalogue/import_excel.py augustave-bijoux.xlsx --dry-run   # voir les changements
+python3 tools/catalogue/import_excel.py augustave-bijoux.xlsx   # Excel -> lib/commerce/mock/catalog.json
+```
+
+Une ligne sans référence crée un nouveau bijou ; une ligne supprimée retire le bijou. Nécessite `openpyxl`.
+Une fois Shopify branché, ce même fichier sert à créer ou mettre à jour les produits Shopify.
+
+## Option cadeau
+
+Dans le panier, « C'est pour offrir » ajoute l'écrin cadeau et un petit mot (240 caractères).
+Avec Shopify, l'option arrive dans la commande : note et attributs « Cadeau » et « Petit mot ».
 
 ## Organisation du code
 
@@ -106,13 +139,16 @@ lib/commerce/mock/      catalogue de démonstration (catalog.json)
 lib/commerce/shopify/   client et requêtes Storefront API
 lib/site.ts             textes éditables : bandeau, engagements, pages d'infos, e-mail
 lib/jewel-art.mjs       illustrations de remplacement des bijoux
+lib/atelier.mjs         atelier sur-mesure interactif
+tools/catalogue/        fichier Excel des bijoux (export / import)
 public/brand/           logo (rond, doré détouré, monogramme)
 preview/                aperçu statique en une page (node --no-warnings preview/build.mjs)
 ```
 
 ## À compléter avant la mise en ligne
 
-- Prix, descriptions et matières des bijoux (les valeurs actuelles sont des exemples).
+- Prix, descriptions et matières des bijoux (les valeurs actuelles sont des exemples) : via le fichier Excel.
+- Prix des perles et pendentifs de l'atelier (`lib/atelier.mjs`, valeurs d'exemple).
 - Adresse e-mail de contact (`lib/site.ts`), seuil de livraison offerte, tarifs de livraison.
 - CGV, mentions légales, politique de confidentialité (`lib/site.ts`, `infoPages`).
 - Newsletter : relier `NewsletterForm` (components/Forms.tsx) à Shopify, Klaviyo ou Brevo.

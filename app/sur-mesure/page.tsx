@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { commerce } from "@/lib/commerce";
 import { findImage } from "@/lib/media";
 import { bespokeSteps } from "@/lib/site";
@@ -48,6 +49,9 @@ export default async function Page() {
             <p className="lead reveal" style={{ fontSize: 15 }}>
               Délai de création : 2 à 3 semaines. Tarif à partir de 90 €, selon les perles et pendentifs choisis.
             </p>
+            <Link href="/atelier" className="btn btn--solid reveal" style={{ justifySelf: "start" }}>
+              Composer mon collier dans l&apos;atelier
+            </Link>
           </div>
         </div>
       </section>
