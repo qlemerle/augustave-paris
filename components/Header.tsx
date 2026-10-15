@@ -52,7 +52,6 @@ export function Header({ categories, collections }: Props) {
   const cls = ["header", overHero && "header--over-hero", (scrolled || menuOpen) && "header--scrolled", hidden && !menuOpen && "header--hidden"]
     .filter(Boolean)
     .join(" ");
-  const featured = collections.slice(0, 2);
 
   return (
     <>
@@ -99,38 +98,17 @@ export function Header({ categories, collections }: Props) {
                     {item.label}
                   </Link>
                   <div className="mega">
-                    <div className="container mega__inner">
-                      <div>
-                        <p className="eyebrow mega__title">Catégories</p>
-                        <ul className="mega__list">
-                          <li>
-                            <Link href="/boutique">Tous les bijoux</Link>
-                          </li>
-                          {categories.map((c) => (
-                            <li key={c.handle}>
-                              <Link href={`/boutique/${c.handle}`}>{c.title}</Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div>
-                        <p className="eyebrow mega__title">Collections</p>
-                        <ul className="mega__list">
-                          {collections.map((c) => (
-                            <li key={c.handle}>
-                              <Link href={`/collections/${c.handle}`}>{c.title}</Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="mega__feature">
-                        {featured.map((c) => (
-                          <Link href={`/collections/${c.handle}`} className="mega__card" key={c.handle}>
-                            <MediaClient image={c.image} art={c.art} seed={c.handle} alt={c.title} />
-                            <p>{c.title}</p>
-                          </Link>
-                        ))}
-                      </div>
+                    <div className="container mega__cols" style={{ ["--n" as string]: categories.length }}>
+                      {categories.map((c) => (
+                        <Link href={`/boutique/${c.handle}`} className="mega__col" key={c.handle}>
+                          <MediaClient image={c.image} art={c.art} seed={c.handle} alt={c.title} />
+                          <span>{c.tagline}</span>
+                          <p>{c.title}</p>
+                        </Link>
+                      ))}
+                      <Link href="/boutique" className="mega__all link-underline">
+                        Tous les bijoux
+                      </Link>
                     </div>
                   </div>
                 </div>

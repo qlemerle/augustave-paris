@@ -649,7 +649,7 @@ button {
 /* Méga-menu des collections : une vignette par collection */
 .mega__cols {
   display: grid;
-  grid-template-columns: repeat(var(--n, 7), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--n, 7), minmax(0, 200px));
   gap: 16px;
   padding-top: 32px;
   padding-bottom: 32px;

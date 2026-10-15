@@ -593,7 +593,6 @@
 
   // ---------- Coquille (en-tête, pied de page, panier) ----------
   function shell() {
-    const featured = collections.slice(0, 2);
     document.getElementById("shell-top").innerHTML = `
     <div class="preloader" aria-hidden="true"><div class="preloader__inner">
       <img class="preloader__mono" src="${MONO}" alt="">
@@ -613,11 +612,8 @@
               <a href="${L("/collections")}" class="mega__all link-underline">Toutes les collections</a></div></div></div>`
               : item.mega
               ? `<div class="has-mega"><a href="${L(item.href)}" class="nav-link" data-nav="${item.href}">${item.label}</a>
-            <div class="mega"><div class="container mega__inner">
-              <div><p class="eyebrow mega__title">Catégories</p><ul class="mega__list"><li><a href="${L("/boutique")}">Tous les bijoux</a></li>${categories.map((c) => `<li><a href="${L("/boutique/" + c.handle)}">${esc(c.title)}</a></li>`).join("")}</ul></div>
-              <div><p class="eyebrow mega__title">Collections</p><ul class="mega__list">${collections.map((c) => `<li><a href="${L("/collections/" + c.handle)}">${esc(c.title)}</a></li>`).join("")}</ul></div>
-              <div class="mega__feature">${featured.map((c) => `<a href="${L("/collections/" + c.handle)}" class="mega__card">${media(c.art, c.handle, { src: img("collections/" + c.handle), alt: c.title })}<p>${esc(c.title)}</p></a>`).join("")}</div>
-            </div></div></div>`
+            <div class="mega"><div class="container mega__cols" style="--n:${categories.length}">${categories.map((c) => `<a href="${L("/boutique/" + c.handle)}" class="mega__col">${media(c.art, c.handle, { src: img("categories/" + c.handle), alt: c.title })}<span>${esc(c.tagline)}</span><p>${esc(c.title)}</p></a>`).join("")}
+              <a href="${L("/boutique")}" class="mega__all link-underline">Tous les bijoux</a></div></div></div>`
               : `<a href="${L(item.href)}" class="nav-link" data-nav="${item.href}">${item.label}</a>`,
           )
           .join("")}
