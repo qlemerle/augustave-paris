@@ -10,7 +10,13 @@ export const site = {
   email: "contact@augustave.paris", // à confirmer
   freeShippingFrom: 80, // € — seuil de livraison offerte (à confirmer)
   returnsDays: 14,
+  // -10 % sur la première commande : code de réduction Shopify appliqué automatiquement au paiement
+  // (Shopify vérifie que c'est bien la première commande de la cliente)
+  welcome: { code: "BIENVENUE10", percent: 10 },
+  // Google Analytics 4 : identifiant de mesure « G-… » (vide = aucune mesure, aucun bandeau cookies)
+  gaId: (typeof process !== "undefined" && (process.env.NEXT_PUBLIC_GA_ID || process.env.GA_ID)) || "",
   announcements: [
+    "−10 % sur votre première commande",
     "Fait main à Paris, perle après perle",
     "Livraison offerte dès 80 €",
     "Édition Votre Histoire : votre collier sur-mesure",

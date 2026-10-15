@@ -10,6 +10,7 @@ import { NewsletterForm } from "@/components/Forms";
 import { Chapters, Manifesto } from "@/components/Story";
 import { ArrowIcon, InstagramIcon, PromiseIcon } from "@/components/Icons";
 import type { JewelArt } from "@/lib/commerce/types";
+import { instaHref, instaPosts } from "@/lib/instagram";
 
 function HeroArt({ art }: { art?: JewelArt }) {
   return (
@@ -257,18 +258,45 @@ export default async function Home() {
         <div className="container">
           <div className="section-head">
             <div>
-              <h2 className="display h3 reveal">{site.instagramHandle}</h2>
+              <h2 className="display h3 reveal">Vu sur Instagram</h2>
+              <p className="section-sub reveal">
+                Vous les portez. Identifiez {site.instagramHandle} sur vos photos pour apparaître ici.
+              </p>
             </div>
             <a href={site.instagram} target="_blank" rel="noreferrer" className="link-underline reveal" style={{ display: "inline-flex", gap: 10, alignItems: "center" }}>
               <InstagramIcon size={16} /> Nous suivre
             </a>
           </div>
           <div className="insta-grid">
-            {insta.map((p, i) => (
-              <a key={p.handle} href={site.instagram} target="_blank" rel="noreferrer" className="reveal" style={{ ["--d" as string]: `${i * 70}ms` }} aria-label={`${p.title} sur Instagram`}>
-                <Media image={p.images[0]} art={p.art} seed={`insta-${p.handle}`} alt={p.title} sizes="(max-width: 900px) 33vw, 17vw" />
-              </a>
-            ))}
+            {instaPosts.length > 0
+              ? instaPosts.slice(0, 6).map((post, i) => {
+                  const href = instaHref(post.link);
+                  const label = post.username ? `@${post.username}` : site.instagramHandle;
+                  const body = (
+                    <>
+                      <Media image={findImage(post.image, `Photo de ${label}`)} seed={`insta-${post.id}`} alt={`Photo de ${label}`} sizes="(max-width: 900px) 33vw, 17vw" />
+                      <span className="insta-grid__by">
+                        {label}
+                        {href && <em>Voir le bijou</em>}
+                      </span>
+                    </>
+                  );
+                  const props = { className: "reveal", style: { ["--d" as string]: `${i * 70}ms` } };
+                  return href ? (
+                    <Link key={post.id} href={href} {...props} data-insta={post.id}>
+                      {body}
+                    </Link>
+                  ) : (
+                    <a key={post.id} href={post.permalink} target="_blank" rel="noreferrer" {...props} data-insta={post.id}>
+                      {body}
+                    </a>
+                  );
+                })
+              : insta.map((p, i) => (
+                  <Link key={p.handle} href={`/produit/${p.handle}`} className="reveal" style={{ ["--d" as string]: `${i * 70}ms` }} aria-label={p.title}>
+                    <Media image={p.images[0]} art={p.art} seed={`insta-${p.handle}`} alt={p.title} sizes="(max-width: 900px) 33vw, 17vw" />
+                  </Link>
+                ))}
           </div>
         </div>
       </section>

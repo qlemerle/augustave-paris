@@ -1,4 +1,5 @@
 import "server-only";
+import { site } from "@/lib/site";
 import catalog from "../mock/catalog.json";
 import { shopifyFetch } from "./client";
 import { ATELIER_PRODUCT_QUERY, CART_CREATE_MUTATION, COLLECTION_PRODUCTS_QUERY, COLLECTIONS_QUERY, PRODUCT_QUERY, PRODUCTS_QUERY } from "./queries";
@@ -170,8 +171,11 @@ export const shopifyProvider: CommerceProvider = {
         ],
       };
     };
+    // -10 % première commande : Shopify n'applique le code qu'aux clientes éligibles
+    const welcome = process.env.SHOPIFY_WELCOME_CODE ?? site.welcome?.code;
     const input = {
       lines: lines.map(toLine),
+      ...(welcome ? { discountCodes: [welcome] } : {}),
       ...(gift
         ? {
             note: gift.message ? `Cadeau : écrin et petit mot. « ${gift.message} »` : "Cadeau : écrin et petit mot.",

@@ -16,6 +16,7 @@ const jewel = read("lib/jewel-art.mjs").replace(/^export /gm, "");
 const fx = read("lib/fx.mjs").replace(/^export /gm, "");
 const atelier = read("lib/atelier.mjs").replace(/^export /gm, "");
 const share = read("lib/share.mjs").replace(/^export /gm, "");
+const analytics = read("lib/analytics.mjs").replace(/^export /gm, "");
 // photos disponibles (publiées à côté de la page sous images/...)
 const listDir = (dir, base = "") =>
   fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -32,6 +33,7 @@ const data = {
   bespokeSteps: content.bespokeSteps,
   infoPages: content.infoPages,
   story: content.story,
+  instagram: JSON.parse(read("content/instagram.json")).posts,
   images,
   mono: b64("mono.webp", "image/webp"),
   logo: b64("logo.webp", "image/webp"),
@@ -59,6 +61,10 @@ window.__DATA.fx = { initPreloader, curtainCover, curtainReveal, initPageFx };
 window.__DATA.atelier = (() => {
 ${atelier}
 return { mountAtelier, decodeDesign, describeDesign };
+})();
+window.__DATA.analytics = (() => {
+${analytics}
+return { initAnalytics, track, trackPage, gaItem };
 })();
 window.__DATA.share = (() => {
 ${share}

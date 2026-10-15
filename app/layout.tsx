@@ -9,6 +9,7 @@ import { Footer } from "@/components/Footer";
 import { RevealObserver } from "@/components/RevealObserver";
 import { Fx } from "@/components/Fx";
 import { Chrome } from "@/components/Chrome";
+import { Analytics } from "@/components/Analytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
@@ -43,6 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         </CartProvider>
         <RevealObserver />
         <Fx />
+        <Analytics />
       </body>
     </html>
   );

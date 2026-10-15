@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import type { Image, JewelArt } from "@/lib/commerce/types";
+import { gaItem, track } from "@/lib/analytics.mjs";
 
 export type CartLine = {
   variantId: string;
@@ -67,9 +68,16 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     document.body.classList.toggle("no-scroll", isOpen);
+    if (isOpen) track("view_cart", gaCart(lines));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   const add = useCallback((line: Omit<CartLine, "quantity">, quantity = 1) => {
+    track("add_to_cart", {
+      currency: line.currencyCode,
+      value: line.price * quantity,
+      items: [gaItem({ id: line.handle, name: line.title, variant: line.variantTitle, price: line.price, quantity })],
+    });
     setLines((prev) => {
       const existing = prev.find((l) => l.variantId === line.variantId);
       if (existing) return prev.map((l) => (l.variantId === line.variantId ? { ...l, quantity: l.quantity + quantity } : l));
@@ -100,7 +108,11 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       close: () => setOpen(false),
       add,
       setQuantity,
-      remove: (id) => setQuantity(id, 0),
+      remove: (id) => {
+        const l = lines.find((x) => x.variantId === id);
+        if (l) track("remove_from_cart", gaCart([l]));
+        setQuantity(id, 0);
+      },
       clear: () => setLines([]),
     }),
     [lines, gift, isOpen, toast, add, setQuantity],
@@ -108,6 +120,13 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
+
+/** Panier au format GA4 e-commerce */
+export const gaCart = (lines: CartLine[]) => ({
+  currency: "EUR",
+  value: lines.reduce((n, l) => n + l.quantity * l.price, 0),
+  items: lines.map((l) => gaItem({ id: l.handle, name: l.title, variant: l.variantTitle, price: l.price, quantity: l.quantity })),
+});
 
 export function useCart() {
   const ctx = useContext(Ctx);

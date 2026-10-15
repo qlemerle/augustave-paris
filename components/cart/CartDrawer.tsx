@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useTransition, useState } from "react";
-import { useCart } from "./CartProvider";
+import { gaCart, useCart } from "./CartProvider";
+import { track } from "@/lib/analytics.mjs";
 import { startCheckout } from "@/app/actions";
 import { formatPrice } from "@/lib/commerce/format";
 import { site } from "@/lib/site";
@@ -23,6 +24,7 @@ export function CartDrawer() {
   const checkout = () =>
     startTransition(async () => {
       setError(null);
+      track("begin_checkout", { ...gaCart(cart.lines), ...(site.welcome ? { coupon: site.welcome.code } : {}) });
       const res = await startCheckout(
         cart.lines.map((l) => ({ variantId: l.variantId, quantity: l.quantity })),
         cart.gift,
@@ -121,6 +123,11 @@ export function CartDrawer() {
                 <span>Sous-total</span>
                 <strong>{formatPrice(cart.subtotal)}</strong>
               </div>
+              {site.welcome && (
+                <p className="welcome-note">
+                  Première commande ? −{site.welcome.percent} % déduits automatiquement au paiement.
+                </p>
+              )}
               <p className="form-note" style={{ margin: 0 }}>
                 Taxes incluses. Frais de livraison calculés à l&apos;étape suivante.
               </p>

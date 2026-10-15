@@ -4,10 +4,13 @@
 
 (function () {
   const D = window.__DATA;
-  const { catalog, site, nav, heroSlides, promises, bespokeSteps, infoPages, story, images } = D;
+  const { catalog, site, nav, heroSlides, promises, bespokeSteps, infoPages, story, images, instagram = [] } = D;
   const FX = D.fx;
   const AT = D.atelier;
   const SH = D.share;
+  const GA = D.analytics;
+  const gaLine = (l) => GA.gaItem({ id: l.handle, name: l.title, variant: l.variant, price: l.price, quantity: l.qty });
+  const gaCart = (lines) => ({ currency: "EUR", value: lines.reduce((n, l) => n + l.qty * l.price, 0), items: lines.map(gaLine) });
   // données de partage d'un bijou (lien direct vers sa fiche)
   const shareData = (p) => {
     const photo = img(`produits/${p.handle}-1`);
@@ -170,6 +173,17 @@
     </div></section>`;
   }
 
+  // vignette « Vu sur Instagram » : mène au bijou associé, sinon à la publication
+  const instaHref = (link) => (!link ? null : link.startsWith("collections/") ? L("/" + link) : L("/produit/" + link));
+  function instaTile(post, i, toJewel) {
+    const href = toJewel ? instaHref(post.link) : null;
+    const who = post.username ? "@" + post.username : site.instagramHandle;
+    const body = `${media(null, "insta-" + post.id, { src: img(post.image), alt: "Photo de " + who })}<span class="insta-grid__by">${esc(who)}${href ? "<em>Voir le bijou</em>" : ""}</span>`;
+    return href
+      ? `<a href="${href}" class="reveal" ${d(i * 70)} data-insta="${esc(post.id)}">${body}</a>`
+      : `<a href="${esc(post.permalink)}" target="_blank" rel="noreferrer" class="reveal" ${d(i * 70)} data-insta="${esc(post.id)}">${body}</a>`;
+  }
+
   function home() {
     const fall = products.filter((p) => p.collection === "edition-fall" || p.tags.includes("nouveau")).slice(0, 4);
     const best = products.filter((p) => p.tags.includes("best-seller")).slice(0, 4);
@@ -258,12 +272,14 @@
 
     <section class="section section--tight" style="padding-top:0"><div class="container">
       <div class="section-head">
-        <div><h2 class="display h3 reveal">${esc(site.instagramHandle)}</h2></div>
+        <div><h2 class="display h3 reveal">Vu sur Instagram</h2><p class="section-sub reveal">Vous les portez. Identifiez ${esc(site.instagramHandle)} sur vos photos pour apparaître ici.</p></div>
         <a href="${site.instagram}" target="_blank" rel="noreferrer" class="link-underline reveal" style="display:inline-flex;gap:10px;align-items:center">${INSTA(16)} Nous suivre</a>
       </div>
-      <div class="insta-grid">${insta
-        .map((p, i) => `<a href="${site.instagram}" target="_blank" rel="noreferrer" class="reveal" ${d(i * 70)} aria-label="${esc(p.title)} sur Instagram">${media(p.art, "insta-" + p.handle, { src: img("produits/" + p.handle + "-1"), alt: p.title })}</a>`)
-        .join("")}</div>
+      <div class="insta-grid">${
+        instagram.length
+          ? instagram.slice(0, 6).map((post, i) => instaTile(post, i, true)).join("")
+          : insta.map((p, i) => `<a href="${L("/produit/" + p.handle)}" class="reveal" ${d(i * 70)} aria-label="${esc(p.title)}">${media(p.art, "insta-" + p.handle, { src: img("produits/" + p.handle + "-1"), alt: p.title })}</a>`).join("")
+      }</div>
     </div></section>
 
     <section class="section section--cream"><div class="container newsletter">
@@ -346,6 +362,7 @@
     const col = colBy(p.collection);
     const cat = catBy(p.category);
     const related = products.filter((x) => x.collection === p.collection && x.handle !== handle).slice(0, 4);
+    const worn = instagram.filter((post) => post.link === handle);
     const photos = [1, 2, 3, 4].map((n) => img("produits/" + p.handle + "-" + n)).filter(Boolean);
     const gallery = photos.length ? photos.map((src) => media(p.art, p.handle, { src, alt: p.title })) : [
       media(p.art, p.handle),
@@ -374,7 +391,7 @@
             <button type="button" class="btn btn--solid" data-add>Ajouter au panier</button>
           </div>
         </div>
-        <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li><li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li></ul>
+        <ul class="reassurance"><li>Fait main dans notre atelier parisien</li><li>Livraison offerte dès ${site.freeShippingFrom} €, dans un écrin Augustave</li><li>Retours gratuits sous ${site.returnsDays} jours</li>${site.welcome ? `<li>−${site.welcome.percent} % sur votre première commande, déduits au paiement</li>` : ""}<li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li></ul>
         <div class="share" data-share="${p.handle}"><span class="share__label">Partager</span><div class="share__row">
           <button type="button" class="share__btn share__btn--main" data-share-story>En story Instagram</button>
           <button type="button" class="share__btn" data-share-link>Envoyer le lien</button>
@@ -391,6 +408,11 @@
         </div>
       </div>
     </div>
+    ${
+      worn.length
+        ? `<section class="section section--tight"><div class="container"><div class="section-head"><div><h2 class="display h3 reveal">Porté par vous</h2></div><a href="${site.instagram}" target="_blank" rel="noreferrer" class="link-underline reveal">${esc(site.instagramHandle)}</a></div><div class="insta-grid">${worn.slice(0, 6).map((post, i) => instaTile(post, i, false)).join("")}</div></div></section>`
+        : ""
+    }
     ${
       related.length
         ? `<section class="section section--cream"><div class="container">${sectionHead("Dans la même collection", esc(col.title))}<div class="product-grid">${related.map((r, i) => productCard(r, i * 90)).join("")}</div></div></section>`
@@ -432,6 +454,7 @@
         const ex = cart.find((l) => l.id === id);
         if (ex) ex.qty += 1;
         else cart.push({ id, handle: "atelier", title: "Ma création de l'atelier", variant: text, price: amount, qty: 1, thumb, href: "/atelier?d=" + code });
+        GA.track("add_to_cart", { currency: "EUR", value: amount, items: [GA.gaItem({ id: "creation-atelier", name: "Ma création de l'atelier", variant: code, price: amount })] });
         save();
         renderCart(true);
         openCart(true);
@@ -605,7 +628,7 @@
         <div><h4>La Maison</h4><ul><li><a href="${L("/maison")}">Notre histoire</a></li><li><a href="${L("/collections")}">Collections</a></li><li><a href="${site.instagram}" target="_blank" rel="noreferrer">Instagram</a></li></ul></div>
       </div>
       <div class="footer__bottom"><span>© ${new Date().getFullYear()} Augustave Paris. Tous droits réservés.</span>
-        <span style="display:flex;gap:20px;flex-wrap:wrap"><a href="${L("/infos/cgv")}">CGV</a><a href="${L("/infos/mentions-legales")}">Mentions légales</a><a href="${L("/infos/confidentialite")}">Confidentialité</a></span></div>
+        <span style="display:flex;gap:20px;flex-wrap:wrap"><a href="${L("/infos/cgv")}">CGV</a><a href="${L("/infos/mentions-legales")}">Mentions légales</a><a href="${L("/infos/confidentialite")}">Confidentialité</a>${site.gaId ? '<a href="#cookies" data-cookies-open>Cookies</a>' : ""}</span></div>
       <p class="footer__word" aria-hidden="true">AUGUSTAVE</p>
     </div></footer>
     <div class="drawer-backdrop" id="backdrop"></div>
@@ -643,12 +666,14 @@
     const ex = cart.find((l) => l.id === v.id);
     if (ex) ex.qty += qty;
     else cart.push({ id: v.id, handle: p.handle, title: p.title, variant: v.title, price: v.price, qty });
+    GA.track("add_to_cart", { currency: "EUR", value: v.price * qty, items: [GA.gaItem({ id: p.handle, name: p.title, category: p.category, collection: colBy(p.collection)?.title, variant: v.title, price: v.price, quantity: qty })] });
     save();
     renderCart(true);
     openCart(true);
   }
 
   function openCart(open) {
+    if (open && !document.getElementById("drawer").classList.contains("is-open")) GA.track("view_cart", gaCart(cart));
     document.getElementById("drawer").classList.toggle("is-open", open);
     document.getElementById("backdrop").classList.toggle("is-open", open);
     document.body.classList.toggle("no-scroll", open);
@@ -685,8 +710,9 @@
             .join("")}
         </div>
         <div class="drawer__foot">${giftBlock()}<div class="drawer__total"><span>Sous-total</span><strong>${price(subtotal)}</strong></div>
+          ${site.welcome ? `<p class="welcome-note">Première commande ? −${site.welcome.percent} % déduits automatiquement au paiement.</p>` : ""}
           <p class="form-note" style="margin:0">Taxes incluses. Frais de livraison calculés à l'étape suivante.</p>
-          <a class="btn btn--solid btn--block" href="${L("/commande-demo")}" data-close>Passer commande</a></div>`
+          <a class="btn btn--solid btn--block" href="${L("/commande-demo")}" data-close data-checkout>Passer commande</a></div>`
     }`;
   }
 
@@ -778,6 +804,11 @@
     if (fxCleanup) fxCleanup();
     fxCleanup = FX.initPageFx(document);
     if (isHome) startHero();
+    GA.trackPage(location.pathname + "#" + path);
+    if (parts[0] === "produit") {
+      const p = products.find((x) => x.handle === parts[1]);
+      if (p) GA.track("view_item", { currency: "EUR", value: p.price, items: [GA.gaItem({ id: p.handle, name: p.title, category: p.category, collection: colBy(p.collection)?.title, price: p.price })] });
+    }
     if (parts[0] === "atelier") mountAtelierPage(params);
   }
 
@@ -823,6 +854,7 @@
     const href = t.getAttribute("href");
     if (href && href.startsWith("#/")) {
       e.preventDefault();
+      if (t.hasAttribute("data-checkout")) GA.track("begin_checkout", { ...gaCart(cart), ...(site.welcome ? { coupon: site.welcome.code } : {}) });
       if (t.hasAttribute("data-close")) openCart(false);
       return go(href.slice(1), t.dataset.label);
     }
@@ -852,6 +884,7 @@
     }
     if (t.dataset.line) {
       const l = cart.find((x) => x.id === t.dataset.line);
+      if (+t.dataset.delta < -1) GA.track("remove_from_cart", gaCart([l]));
       l.qty += +t.dataset.delta;
       cart = cart.filter((x) => x.qty > 0);
       save();
@@ -912,6 +945,8 @@
   document.addEventListener("submit", (e) => {
     const f = e.target;
     e.preventDefault();
+    if (f.dataset.form === "newsletter") GA.track("sign_up", { method: "newsletter" });
+    if (f.dataset.form === "bespoke") GA.track("generate_lead", { form: "sur-mesure", creation: !!creation });
     if (f.dataset.form === "newsletter") f.outerHTML = '<p class="lead" style="margin:0">Merci, vous êtes inscrite. À très vite dans votre boîte mail.</p>';
     if (f.dataset.form === "bespoke") creation = null;
     if (f.dataset.form === "bespoke") f.outerHTML = '<div class="notice">Merci ! Dans le site final, votre demande nous est envoyée par e-mail et nous vous répondons sous 48 h.</div>';
@@ -920,6 +955,7 @@
   window.addEventListener("keydown", (e) => e.key === "Escape" && openCart(false));
 
   shell();
+  GA.initAnalytics(site.gaId);
   FX.initPreloader();
   document.getElementById("backdrop").addEventListener("click", () => openCart(false));
   renderCart();

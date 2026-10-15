@@ -1,3 +1,4 @@
+import { site } from "@/lib/site";
 import fs from "node:fs";
 import path from "node:path";
 import catalog from "./catalog.json";
@@ -112,6 +113,6 @@ export const mockProvider: CommerceProvider = {
   async createCheckout(lines, gift) {
     const count = lines.reduce((n, l) => n + l.quantity, 0);
     const creations = lines.filter((l) => l.atelier).length;
-    return { checkoutUrl: `/commande-demo?articles=${count}${creations ? `&creations=${creations}` : ""}${gift ? "&cadeau=1" : ""}` };
+    return { checkoutUrl: `/commande-demo?articles=${count}${creations ? `&creations=${creations}` : ""}${gift ? "&cadeau=1" : ""}${site.welcome ? `&code=${site.welcome.code}` : ""}` };
   },
 };

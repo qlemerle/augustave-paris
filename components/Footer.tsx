@@ -63,6 +63,11 @@ export function Footer({ categories }: { categories: Category[] }) {
             <Link href="/infos/cgv">CGV</Link>
             <Link href="/infos/mentions-legales">Mentions légales</Link>
             <Link href="/infos/confidentialite">Confidentialité</Link>
+            {site.gaId && (
+              <a href="#cookies" data-cookies-open>
+                Cookies
+              </a>
+            )}
           </span>
         </div>
         <p className="footer__word" aria-hidden>

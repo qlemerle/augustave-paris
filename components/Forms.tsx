@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
 import { decodeDesign, describeDesign } from "@/lib/atelier.mjs";
+import { track } from "@/lib/analytics.mjs";
 
 // Newsletter : à relier à Shopify (customerCreate avec acceptsMarketing) ou à Klaviyo / Brevo.
 export function NewsletterForm() {
@@ -15,6 +16,7 @@ export function NewsletterForm() {
     <form
       onSubmit={(e) => {
         e.preventDefault();
+        track("sign_up", { method: "newsletter" });
         setDone(true);
       }}
     >
@@ -60,6 +62,7 @@ export function BespokeForm() {
           "",
           `${f.get("histoire")}`,
         ].join("\n");
+        track("generate_lead", { form: "sur-mesure", creation: !!creation });
         window.location.href = `mailto:${site.email}?subject=${encodeURIComponent("Édition Votre Histoire")}&body=${encodeURIComponent(body)}`;
         setSent(true);
       }}

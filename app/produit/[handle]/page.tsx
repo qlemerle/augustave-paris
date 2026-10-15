@@ -7,6 +7,9 @@ import { Media } from "@/components/Media";
 import { AddToCart } from "@/components/AddToCart";
 import { ProductCard } from "@/components/ProductCard";
 import { ShareProduct } from "@/components/ShareProduct";
+import { instaPostsFor } from "@/lib/instagram";
+import { findImage } from "@/lib/media";
+import { TrackEvent } from "@/components/Analytics";
 import { formatPrice } from "@/lib/commerce/format";
 
 type Props = { params: Promise<{ handle: string }> };
@@ -37,6 +40,7 @@ export default async function Page({ params }: Props) {
     commerce.getProducts({ collection: product.collection }),
   ]);
   const related = siblings.filter((p) => p.handle !== product.handle).slice(0, 4);
+  const worn = instaPostsFor(product.handle);
 
   // Galerie : photos réelles, sinon 3 cadrages de l'illustration
   const gallery = product.images.length
@@ -104,6 +108,7 @@ export default async function Page({ params }: Props) {
             <li>Fait main dans notre atelier parisien</li>
             <li>Livraison offerte dès {site.freeShippingFrom} €, dans un écrin Augustave</li>
             <li>Retours gratuits sous {site.returnsDays} jours</li>
+            {site.welcome && <li>−{site.welcome.percent} % sur votre première commande, déduits au paiement</li>}
             <li>Pour offrir : écrin cadeau et petit mot écrit à la main, à cocher dans le panier</li>
           </ul>
           <ShareProduct
@@ -159,6 +164,29 @@ export default async function Page({ params }: Props) {
         </div>
       </div>
 
+      {worn.length > 0 && (
+        <section className="section section--tight">
+          <div className="container">
+            <div className="section-head">
+              <div>
+                <h2 className="display h3 reveal">Porté par vous</h2>
+              </div>
+              <a href={site.instagram} target="_blank" rel="noreferrer" className="link-underline reveal">
+                {site.instagramHandle}
+              </a>
+            </div>
+            <div className="insta-grid">
+              {worn.slice(0, 6).map((post, i) => (
+                <a key={post.id} href={post.permalink} target="_blank" rel="noreferrer" className="reveal" style={{ ["--d" as string]: `${i * 70}ms` }}>
+                  <Media image={findImage(post.image, `Photo de @${post.username}`)} seed={`insta-${post.id}`} alt={`Photo de @${post.username}`} sizes="(max-width: 900px) 33vw, 17vw" />
+                  <span className="insta-grid__by">@{post.username}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {related.length > 0 && (
         <section className="section section--cream">
           <div className="container">
@@ -175,6 +203,14 @@ export default async function Page({ params }: Props) {
           </div>
         </section>
       )}
+      <TrackEvent
+        name="view_item"
+        params={{
+          currency: product.price.currencyCode,
+          value: product.price.amount,
+          items: [{ item_id: product.handle, item_name: product.title, item_brand: site.name, item_category: product.category, item_category2: collection?.title, price: product.price.amount, quantity: 1 }],
+        }}
+      />
       {/* balises produit Open Graph (property=, que Next ne génère pas) : React les place dans le <head> */}
       <meta property="product:price:amount" content={String(product.price.amount)} />
       <meta property="product:price:currency" content={product.price.currencyCode} />

@@ -1,0 +1,7 @@
+{
+  "_aide": "masquer : identifiants de publications à ne pas afficher. bijoux : associe une publication (identifiant) à un bijou (handle) ou à une collection (collections/handle) quand la détection automatique se trompe. propres : true pour ajouter aussi les publications du compte @augustave.paris.",
+  "masquer": [],
+  "bijoux": {},
+  "propres": false,
+  "maximum": 12
+}

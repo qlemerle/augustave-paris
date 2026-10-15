@@ -147,6 +147,37 @@ Deux voies, au choix :
 Les fiches produits portent les balises `og:` et `product:` (prix, disponibilité, marque) et les données
 structurées schema.org, lues par Meta et Google.
 
+## Vu sur Instagram
+
+L'accueil montre les dernières photos où **@augustave.paris est identifié** (identification sur la photo). Chaque vignette mène au bijou reconnu dans la légende (titre, collection ou hashtag, ex. `#rougelove`), sinon à la publication. Sur la fiche d'un bijou, la section « Porté par vous » reprend les photos associées. Tant qu'aucune photo n'est importée, la galerie montre les bijoux de la boutique.
+
+- `tools/instagram/sync.mjs` interroge l'API Instagram Graph (`/{ig-user-id}/tags`), télécharge les images dans `public/images/instagram/` et écrit `content/instagram.json`.
+- L'action GitHub « Aperçu GitHub Pages » le lance **chaque matin** et à chaque mise à jour, puis enregistre les nouvelles photos dans le dépôt (Vercel redéploie alors aussi le site).
+- `content/instagram-choix.json` : `masquer` (publications à retirer), `bijoux` (corriger l'association : `"<id>": "collier-rouge-love"` ou `"collections/bronze"`), `propres` (ajouter les publications du compte), `maximum`.
+
+Accès à l'API (une seule fois) :
+1. Compte Instagram **professionnel** (Créateur ou Entreprise) relié à une **page Facebook**.
+2. Sur developers.facebook.com, créer une app de type « Entreprise » avec le produit « Instagram API with Facebook Login ».
+3. Dans Meta Business Suite > Paramètres > Utilisateurs système, créer un utilisateur système, lui donner l'app et la page, puis générer un jeton **sans expiration** avec `instagram_basic`, `instagram_manage_comments`, `pages_show_list`, `pages_read_engagement`.
+4. Trouver l'identifiant Instagram : `GET /me/accounts?fields=instagram_business_account` avec ce jeton.
+5. Dans GitHub > Settings > Secrets and variables > Actions, ajouter les secrets `IG_USER_ID` et `IG_ACCESS_TOKEN`.
+
+Droits : une photo identifiée reste la propriété de son autrice. Bonne pratique : lui demander en commentaire l'accord de la republier, et masquer celles qui ne conviennent pas.
+
+## -10 % sur la première commande
+
+Annoncé dans le bandeau du haut, sur chaque fiche et dans le panier. Au paiement, le site ajoute automatiquement le code `BIENVENUE10` (`site.welcome` dans `lib/site.ts`, ou `SHOPIFY_WELCOME_CODE`). Dans Shopify, le code est une réduction de 10 % réservée au segment « clientes sans commande », une utilisation par cliente : Shopify ne l'accepte donc que pour une première commande. Pour arrêter l'offre, mettre `welcome: null`.
+
+## Mesure d'audience (Google Analytics 4)
+
+1. analytics.google.com > Créer une propriété « Augustave Paris » > flux de données Web : noter l'identifiant **G-XXXXXXX**.
+2. Site Next (Vercel) : variable d'environnement `NEXT_PUBLIC_GA_ID=G-XXXXXXX`. Lien GitHub : GitHub > Settings > Secrets and variables > Actions > **Variables** > `GA_ID`.
+3. Sans identifiant, rien n'est chargé et aucun bandeau n'apparaît.
+
+Un bandeau demande l'accord avant toute mesure (règles CNIL) ; le lien « Cookies » du pied de page permet de changer d'avis. Événements envoyés : `page_view`, `view_item`, `add_to_cart`, `remove_from_cart`, `view_cart`, `begin_checkout` (avec le code de bienvenue), `share` (story, lien, copie, essayage), `sign_up`, `generate_lead` (demande sur-mesure), `tryon_open`, `tryon_save`, `atelier_send`. Code : `lib/analytics.mjs`, partagé par Next et l'aperçu.
+
+Les **achats** ont lieu sur le paiement Shopify : installer l'app Shopify « Google & YouTube » et y relier la même propriété GA4, qui reçoit alors `purchase` avec le chiffre d'affaires.
+
 ## Option cadeau
 
 Dans le panier, « C'est pour offrir » ajoute l'écrin cadeau et un petit mot (240 caractères).
