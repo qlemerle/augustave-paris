@@ -171,8 +171,8 @@ Annoncé dans le bandeau du haut, sur chaque fiche et dans le panier. Au paiemen
 ## Mesure d'audience (Google Analytics 4)
 
 1. analytics.google.com > Créer une propriété « Augustave Paris » > flux de données Web : noter l'identifiant **G-XXXXXXX**.
-2. Site Next (Vercel) : variable d'environnement `NEXT_PUBLIC_GA_ID=G-XXXXXXX`. Lien GitHub : GitHub > Settings > Secrets and variables > Actions > **Variables** > `GA_ID`.
-3. Sans identifiant, rien n'est chargé et aucun bandeau n'apparaît.
+2. L'identifiant est dans `site.gaId` (`lib/site.ts`), actuellement **G-G0K628L9D8**. `NEXT_PUBLIC_GA_ID` (Next) ou la variable GitHub `GA_ID` (aperçu) le remplacent. Identifiant vide = rien n'est chargé, aucun bandeau.
+3. Dans GA4, flux Web > Mesures améliorées > Pages vues > paramètres avancés : décocher « Modifications de l'historique de navigation » (le site envoie déjà ses pages vues, sinon elles comptent double).
 
 Un bandeau demande l'accord avant toute mesure (règles CNIL) ; le lien « Cookies » du pied de page permet de changer d'avis. Événements envoyés : `page_view`, `view_item`, `add_to_cart`, `remove_from_cart`, `view_cart`, `begin_checkout` (avec le code de bienvenue), `share` (story, lien, copie, essayage), `sign_up`, `generate_lead` (demande sur-mesure), `tryon_open`, `tryon_save`, `atelier_send`. Code : `lib/analytics.mjs`, partagé par Next et l'aperçu.
 

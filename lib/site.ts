@@ -14,7 +14,8 @@ export const site = {
   // (Shopify vérifie que c'est bien la première commande de la cliente)
   welcome: { code: "BIENVENUE10", percent: 10 },
   // Google Analytics 4 : identifiant de mesure « G-… » (vide = aucune mesure, aucun bandeau cookies)
-  gaId: (typeof process !== "undefined" && (process.env.NEXT_PUBLIC_GA_ID || process.env.GA_ID)) || "",
+  // (public, sans risque dans le code ; NEXT_PUBLIC_GA_ID ou GA_ID le remplacent)
+  gaId: (typeof process !== "undefined" && (process.env.NEXT_PUBLIC_GA_ID || process.env.GA_ID)) || "G-G0K628L9D8",
   announcements: [
     "−10 % sur votre première commande",
     "Fait main à Paris, perle après perle",
