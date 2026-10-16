@@ -5869,7 +5869,13 @@ function load() {
   };
   window.gtag("js", new Date());
   // les pages vues sont envoyées à la main (navigation sans rechargement)
-  window.gtag("config", gaId, { send_page_view: false, anonymize_ip: true });
+  // ?ga_debug dans l'adresse : les événements s'affichent dans GA4 > Admin > DebugView (mémorisé pour la visite)
+  let debug = /[?&#]ga_debug\b/.test(location.href);
+  try {
+    if (debug) sessionStorage.setItem("augustave-ga-debug", "1");
+    debug = debug || sessionStorage.getItem("augustave-ga-debug") === "1";
+  } catch (e) {}
+  window.gtag("config", gaId, { send_page_view: false, anonymize_ip: true, ...(debug ? { debug_mode: true } : {}) });
   const s = document.createElement("script");
   s.async = true;
   s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(gaId);

@@ -176,6 +176,10 @@ Annoncé dans le bandeau du haut, sur chaque fiche et dans le panier. Au paiemen
 
 Un bandeau demande l'accord avant toute mesure (règles CNIL) ; le lien « Cookies » du pied de page permet de changer d'avis. Événements envoyés : `page_view`, `view_item`, `add_to_cart`, `remove_from_cart`, `view_cart`, `begin_checkout` (avec le code de bienvenue), `share` (story, lien, copie, essayage), `sign_up`, `generate_lead` (demande sur-mesure), `tryon_open`, `tryon_save`, `atelier_send`. Code : `lib/analytics.mjs`, partagé par Next et l'aperçu.
 
+Vérifier les événements : ouvrir le site avec `?ga_debug` à la fin de l'adresse (ex. `https://qlemerle.github.io/augustave-paris/?ga_debug`), accepter les cookies, naviguer, puis GA4 > Admin > DebugView.
+
+Événements clés (conversions) à cocher dans GA4 > Admin > Événements : `purchase`, `begin_checkout`, `add_to_cart`, `generate_lead`, `sign_up`.
+
 Les **achats** ont lieu sur le paiement Shopify : installer l'app Shopify « Google & YouTube » et y relier la même propriété GA4, qui reçoit alors `purchase` avec le chiffre d'affaires.
 
 ## Option cadeau
